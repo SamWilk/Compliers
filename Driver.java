@@ -2,6 +2,8 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Scanner;
+import java.io.*;
 
 public class Driver {
     public static void main(String[] args) throws Exception {
@@ -16,8 +18,9 @@ public class Driver {
     }
 
     String val = "STRING input := 23 4.332\"Please input an integer number: \";";
-       
-    ANTLRInputStream input = new ANTLRInputStream(val); // a lexer that feeds off of input CharStream
+    Scanner scan = new Scanner(System.in);
+    System.out.println(scan);
+    ANTLRInputStream input = new ANTLRInputStream(System.in); // a lexer that feeds off of input CharStream
     
     LittleLexer lexer = new LittleLexer(input); // create a buffer of tokens pulled from the lexer
     while(true){
@@ -30,7 +33,7 @@ public class Driver {
             System.out.println("KEYWORD");
         }
         if(token.getType() == 5){
-            System.out.println("IDENTIFIERS");
+            System.out.println("IDENTIFIER");
         }
         if(token.getType() == 4){
             System.out.println("OPERATOR");
@@ -44,6 +47,12 @@ public class Driver {
         if(token.getType() == 8){
             System.out.println("FLOATLITERAL");
         }
+        if(token.getType() == 9){
+            continue;
+        }
+        // if(token.getType() == 10){
+        //     System.out.println("IDENTIFIER");
+        // }
         System.out.println("Value: " + token.getText());
     }
     CommonTokenStream tokens = new CommonTokenStream(lexer); // create a parser that feeds off the tokens buffer
