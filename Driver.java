@@ -15,7 +15,8 @@ public class Driver {
         is = new FileInputStream(inputFile); 
     }
 
-    String val = "PROGRAM BEGIN STRING FUNCTION int blah f s a d f fe";
+    String val = "STRING input := 23 4.332\"Please input an integer number: \";";
+       
     ANTLRInputStream input = new ANTLRInputStream(val); // a lexer that feeds off of input CharStream
     
     LittleLexer lexer = new LittleLexer(input); // create a buffer of tokens pulled from the lexer
@@ -28,7 +29,22 @@ public class Driver {
         if(token.getType() == 3){
             System.out.println("KEYWORD");
         }
-        System.out.println("Value:" + token.getText());
+        if(token.getType() == 5){
+            System.out.println("IDENTIFIERS");
+        }
+        if(token.getType() == 4){
+            System.out.println("OPERATOR");
+        }
+        if(token.getType() == 6){
+            System.out.println("STRINGLITERAL");
+        }
+        if(token.getType() == 7){
+            System.out.println("INTLITERAL");
+        }
+        if(token.getType() == 8){
+            System.out.println("FLOATLITERAL");
+        }
+        System.out.println("Value: " + token.getText());
     }
     CommonTokenStream tokens = new CommonTokenStream(lexer); // create a parser that feeds off the tokens buffer
     //System.out.println(lexer);
