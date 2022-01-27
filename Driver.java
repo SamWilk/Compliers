@@ -14,9 +14,22 @@ public class Driver {
     if (inputFile!=null) {
         is = new FileInputStream(inputFile); 
     }
-    ANTLRInputStream input = new ANTLRInputStream(is); // a lexer that feeds off of input CharStream
+
+    String val = "PROGRAM BEGIN STRING FUNCTION int blah f s a d f fe";
+    ANTLRInputStream input = new ANTLRInputStream(val); // a lexer that feeds off of input CharStream
     
     LittleLexer lexer = new LittleLexer(input); // create a buffer of tokens pulled from the lexer
+    while(true){
+        Token token = lexer.nextToken();
+        if(token.getType() == LittleLexer.EOF){
+            break;
+        }
+        System.out.print("Token Type: ");
+        if(token.getType() == 3){
+            System.out.println("KEYWORD");
+        }
+        System.out.println("Value:" + token.getText());
+    }
     CommonTokenStream tokens = new CommonTokenStream(lexer); // create a parser that feeds off the tokens buffer
     //System.out.println(lexer);
 

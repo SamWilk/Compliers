@@ -2,12 +2,9 @@
 grammar Little;
 r  : 'Little' ;        // match keyword hello followed by an identifier
 //ID : [a-z]+ ;             // match lower-case identifiers
-WS : [ \t\r]+ -> skip ; // skip spaces, tabs, newlines
+WS : [ \t\r\n]+ -> skip ; // skip spaces, tabs, newlines
 
-NEWLINE: '\n' ;
-BEGIN: 'BEGIN' ;
-PROGRAM : 'PROGRAM' ;
-KEYWORD: (PROGRAM|BEGIN) ;
+KEYWORD: ('PROGRAM'|'BEGIN') ;
 STRING: 'STRING' ;
 FUNCTION: 'FUNCTION' ;
 IF: 'IF' ;
