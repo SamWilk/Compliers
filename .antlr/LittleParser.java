@@ -16,8 +16,8 @@ public class LittleParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, WS=2, KEYWORD=3, OPERATOR=4, IDENTIFIERS=5, STRINGLETERAL=6, INTLITERAL=7, 
-		FLOATLITERAL=8;
+		T__0=1, WS=2, KEYWORD=3, OPERATOR=4, IDENTIFIER=5, STRINGLETERAL=6, INTLITERAL=7, 
+		FLOATLITERAL=8, Comment=9;
 	public static final int
 		RULE_r = 0;
 	private static String[] makeRuleNames() {
@@ -35,8 +35,8 @@ public class LittleParser extends Parser {
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, "WS", "KEYWORD", "OPERATOR", "IDENTIFIERS", "STRINGLETERAL", 
-			"INTLITERAL", "FLOATLITERAL"
+			null, null, "WS", "KEYWORD", "OPERATOR", "IDENTIFIER", "STRINGLETERAL", 
+			"INTLITERAL", "FLOATLITERAL", "Comment"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -119,8 +119,8 @@ public class LittleParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\n\7\4\2\t\2\3\2\3"+
-		"\2\3\2\2\2\3\2\2\2\2\5\2\4\3\2\2\2\4\5\7\3\2\2\5\3\3\2\2\2\2";
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\13\7\4\2\t\2\3\2"+
+		"\3\2\3\2\2\2\3\2\2\2\2\5\2\4\3\2\2\2\4\5\7\3\2\2\5\3\3\2\2\2\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
