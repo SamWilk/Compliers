@@ -1,4 +1,4 @@
-// Generated from Little.g4 by ANTLR 4.9.2
+// Generated from .\Little.g4 by ANTLR 4.9.3
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -10,13 +10,13 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class LittleParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.3", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, WS=2, KEYWORD=3, OPERATOR=4, IDENTIFIER=5, STRINGLETERAL=6, INTLITERAL=7, 
+		T__0=1, WS=2, KEYWORD=3, OPERATOR=4, IDENTIFIER=5, STRINGLITERAL=6, INTLITERAL=7, 
 		FLOATLITERAL=8, Comment=9;
 	public static final int
 		RULE_r = 0;
@@ -35,7 +35,7 @@ public class LittleParser extends Parser {
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, "WS", "KEYWORD", "OPERATOR", "IDENTIFIER", "STRINGLETERAL", 
+			null, null, "WS", "KEYWORD", "OPERATOR", "IDENTIFIER", "STRINGLITERAL", 
 			"INTLITERAL", "FLOATLITERAL", "Comment"
 		};
 	}
