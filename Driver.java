@@ -17,7 +17,6 @@ public class Driver {
         {
             is = new FileInputStream(inputFile); 
         }
-
         ANTLRInputStream input = new ANTLRInputStream(is); // a lexer that feeds off of input CharStream
         LittleLexer lexer = new LittleLexer(input); // create a buffer of tokens pulled from the lexer
         while(true){

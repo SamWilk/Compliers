@@ -9,7 +9,7 @@
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "args": "fibonacci.micro"
+            "args": "inputs/sqrt.micro"
         },
         {
             "type": "java",
