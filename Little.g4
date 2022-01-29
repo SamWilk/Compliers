@@ -10,7 +10,7 @@ KEYWORD: ('PROGRAM'|'BEGIN'|'STRING'|'FUNCTION'|'INT'|'IF'|'ELSE'|'ENDIF'|'END'|
 OPERATOR: (':='|';'|'('|')'|'<'|'>'|'='|'!='|'-'|'+'|','|'*'|'/'|
 '<='|'>=');
 
-IDENTIFIER: ([A-Za-z]+) ;
+IDENTIFIER: ([A-Za-z0-9]+) ;
 
 STRINGLITERAL: ('"'~('"')*'"');
 
@@ -18,5 +18,5 @@ INTLITERAL: '-'?[0-9]+ ;
 
 FLOATLITERAL: '-'?[0-9]('.'[0-9]*)? ;
 
-Comment: '--'+ -> skip;
+Comment: '--'~('\r' | '\n')* -> skip;
 
