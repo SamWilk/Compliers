@@ -41,7 +41,7 @@ param_decl_tail   : ',' param_decl param_decl_tail  ;
 /* Function Declarations */
 func_declarations : func_decl func_declarations  ;
 func_decl         : 'FUNCTION' any_type id (param_decl_list) 'BEGIN' func_body 'END' ;
-// func_body         : 'END' ;
+ //func_body         : 'END' ;
 func_body         : decl stmt_list;
 /* Statement List */
 stmt_list         : stmt stmt_list  ;
