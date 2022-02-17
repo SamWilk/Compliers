@@ -55,9 +55,11 @@ public class Driver {
         CommonTokenStream tokens = new CommonTokenStream(lexer); // create a parser that feeds off the tokens buffer
         //System.out.println(lexer);
 
-        System.out.println(tokens.getText());
+        //System.out.println(tokens.getText());
         LittleParser parser = new LittleParser(tokens);
-        System.out.println(parser.toString());
+        //System.out.println(parser.toString());
+        //run parser, start rule on parser.program(); rule
+        //extend a class baseerrorlistener override syntaxerr(), not execpt try catch, remove error listener in parsers
         //ParseTree tree = parser.init(); // begin parsing at init rule
         //System.out.println(tree.toStringTree(parser)); // print LISP-style tree
 
