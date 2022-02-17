@@ -56,7 +56,8 @@ public class Driver {
         //System.out.println(lexer);
 
         System.out.println(tokens.getText());
-        //LittleLexer parser = new LittleParser(tokens);
+        LittleParser parser = new LittleParser(tokens);
+        System.out.println(parser.toString());
         //ParseTree tree = parser.init(); // begin parsing at init rule
         //System.out.println(tree.toStringTree(parser)); // print LISP-style tree
 
