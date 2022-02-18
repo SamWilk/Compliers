@@ -16,7 +16,7 @@ STRINGLITERAL: ('"'~('"')*'"');
 
 INTLITERAL: [0-9]+ ;
 
-fragment FLOATLITERAL: (([0-9]*)('.'[0-9]+)?) ;
+FLOATLITERAL: (([0-9]*'.'[0-9]+) | (([0-9]+)('.'[0-9]+)?)) ;
 
 Comment: '--'~('\r' | '\n')* -> skip;
 
@@ -117,7 +117,7 @@ postfix_expr      : primary | call_expr ;
 call_expr         : id '(' expr_list ')' ;
 expr_list         : expr expr_list_tail | empty ;
 expr_list_tail    : ',' expr expr_list_tail | empty ;
-primary           : '(' expr ')' | id | 'INT' | 'FLOAT' ;
+primary           : '(' expr ')' | id | FLOATLITERAL | INTLITERAL;
 addop             : '+' | '-' ;
 mulop             : '*' | '/' ;
 /* Complex Statements and Condition */

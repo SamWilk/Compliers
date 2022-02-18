@@ -1,4 +1,4 @@
-// Generated from Little.g4 by ANTLR 4.9.2
+// Generated from Little.g4 by ANTLR 4.9.3
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class LittleParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.3", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -21,7 +21,7 @@ public class LittleParser extends Parser {
 		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
 		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
 		T__31=32, T__32=33, WS=34, KEYWORD=35, OPERATOR=36, IDENTIFIER=37, STRINGLITERAL=38, 
-		INTLITERAL=39, Comment=40;
+		INTLITERAL=39, FLOATLITERAL=40, Comment=41;
 	public static final int
 		RULE_r = 0, RULE_program = 1, RULE_id = 2, RULE_pgm_body = 3, RULE_decl = 4, 
 		RULE_empty = 5, RULE_string_decl = 6, RULE_str = 7, RULE_var_decl = 8, 
@@ -62,7 +62,8 @@ public class LittleParser extends Parser {
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, null, null, 
 			null, null, null, null, null, null, null, null, null, null, "WS", "KEYWORD", 
-			"OPERATOR", "IDENTIFIER", "STRINGLITERAL", "INTLITERAL", "Comment"
+			"OPERATOR", "IDENTIFIER", "STRINGLITERAL", "INTLITERAL", "FLOATLITERAL", 
+			"Comment"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -2024,6 +2025,8 @@ public class LittleParser extends Parser {
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
+		public TerminalNode FLOATLITERAL() { return getToken(LittleParser.FLOATLITERAL, 0); }
+		public TerminalNode INTLITERAL() { return getToken(LittleParser.INTLITERAL, 0); }
 		public PrimaryContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2063,18 +2066,18 @@ public class LittleParser extends Parser {
 				id();
 				}
 				break;
-			case T__8:
+			case FLOATLITERAL:
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(275);
-				match(T__8);
+				match(FLOATLITERAL);
 				}
 				break;
-			case T__7:
+			case INTLITERAL:
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(276);
-				match(T__7);
+				match(INTLITERAL);
 				}
 				break;
 			default:
@@ -2484,7 +2487,7 @@ public class LittleParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3*\u013c\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3+\u013c\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -2568,7 +2571,7 @@ public class LittleParser extends Parser {
 		"\u010b\u010c\5F$\2\u010c\u010f\3\2\2\2\u010d\u010f\5\f\7\2\u010e\u0109"+
 		"\3\2\2\2\u010e\u010d\3\2\2\2\u010fG\3\2\2\2\u0110\u0111\7\17\2\2\u0111"+
 		"\u0112\58\35\2\u0112\u0113\7\20\2\2\u0113\u0118\3\2\2\2\u0114\u0118\5"+
-		"\6\4\2\u0115\u0118\7\13\2\2\u0116\u0118\7\n\2\2\u0117\u0110\3\2\2\2\u0117"+
+		"\6\4\2\u0115\u0118\7*\2\2\u0116\u0118\7)\2\2\u0117\u0110\3\2\2\2\u0117"+
 		"\u0114\3\2\2\2\u0117\u0115\3\2\2\2\u0117\u0116\3\2\2\2\u0118I\3\2\2\2"+
 		"\u0119\u011a\t\3\2\2\u011aK\3\2\2\2\u011b\u011c\t\4\2\2\u011cM\3\2\2\2"+
 		"\u011d\u011e\7\31\2\2\u011e\u011f\7\17\2\2\u011f\u0120\5R*\2\u0120\u0121"+
