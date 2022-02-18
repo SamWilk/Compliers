@@ -85,7 +85,7 @@ empty :  ;
 string_decl       : 'STRING' id ':=' str ';' ;
 str               : STRINGLITERAL ;
 /* Variable Declaration */
-var_decl          : var_type id_list ';' ;
+var_decl          : any_type id_list ';' ;
 var_type         : 'FLOAT' | 'INT' ;
 any_type          : var_type | 'VOID' ;
 id_list           : id id_tail ;
