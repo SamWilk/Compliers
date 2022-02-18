@@ -305,6 +305,7 @@ public class LittleParser extends Parser {
 				break;
 			case T__7:
 			case T__8:
+			case T__9:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(107);
@@ -443,8 +444,8 @@ public class LittleParser extends Parser {
 	}
 
 	public static class Var_declContext extends ParserRuleContext {
-		public Var_typeContext var_type() {
-			return getRuleContext(Var_typeContext.class,0);
+		public Any_typeContext any_type() {
+			return getRuleContext(Any_typeContext.class,0);
 		}
 		public Id_listContext id_list() {
 			return getRuleContext(Id_listContext.class,0);
@@ -462,7 +463,7 @@ public class LittleParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(123);
-			var_type();
+			any_type();
 			setState(124);
 			id_list();
 			setState(125);
@@ -2189,7 +2190,7 @@ public class LittleParser extends Parser {
 		"\b\2kl\5\n\6\2lr\3\2\2\2mn\5\22\n\2no\5\n\6\2or\3\2\2\2pr\5\f\7\2qj\3"+
 		"\2\2\2qm\3\2\2\2qp\3\2\2\2r\13\3\2\2\2st\3\2\2\2t\r\3\2\2\2uv\7\7\2\2"+
 		"vw\5\6\4\2wx\7\b\2\2xy\5\20\t\2yz\7\t\2\2z\17\3\2\2\2{|\7\'\2\2|\21\3"+
-		"\2\2\2}~\5\24\13\2~\177\5\30\r\2\177\u0080\7\t\2\2\u0080\23\3\2\2\2\u0081"+
+		"\2\2\2}~\5\26\f\2~\177\5\30\r\2\177\u0080\7\t\2\2\u0080\23\3\2\2\2\u0081"+
 		"\u0082\t\2\2\2\u0082\25\3\2\2\2\u0083\u0086\5\24\13\2\u0084\u0086\7\f"+
 		"\2\2\u0085\u0083\3\2\2\2\u0085\u0084\3\2\2\2\u0086\27\3\2\2\2\u0087\u0088"+
 		"\5\6\4\2\u0088\u0089\5\32\16\2\u0089\31\3\2\2\2\u008a\u008b\7\r\2\2\u008b"+
