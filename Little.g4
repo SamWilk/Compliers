@@ -99,7 +99,7 @@ func_declarations : func_decl func_declarations | empty ;
 func_decl         : 'FUNCTION' any_type id '('param_decl_list')' 'BEGIN' func_body 'END' ;
 func_body         : decl stmt_list ;
 /* Statement List */
-stmt_list         : stmt stmt_list | 'empty' ;
+stmt_list         : stmt stmt_list | empty ;
 stmt              : base_stmt | if_stmt | while_stmt ;
 base_stmt         : assign_stmt | read_stmt | write_stmt | return_stmt ;
 /* Basic Statements */
