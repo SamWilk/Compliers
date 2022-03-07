@@ -72,10 +72,13 @@ public class Driver {
         //System.out.println(tokens.getText());
         LittleParser parser = new LittleParser(tokens);
         
-            parser.removeErrorListeners(); // remove ConsoleErrorListener 
-            parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
-            parser.program();
-            System.out.print("Accepted");
+            // parser.removeErrorListeners(); // remove ConsoleErrorListener 
+            // parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
+            // parser.program();
+            // System.out.print("Accepted");
+
+            
+        //Add custom class here and then print out here
        
         //System.out.println(parser.program());
         //run parser, start rule on parser.program(); rule
