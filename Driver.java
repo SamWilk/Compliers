@@ -2,9 +2,12 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Stack;
 import java.io.*;
 
 public class Driver {
@@ -18,7 +21,7 @@ public class Driver {
         // System.err.println("rule stack: "+stack);
         // System.err.println("line "+line+":"+charPositionInLine+" at "+
         // offendingSymbol+": "+msg);
-        System.out.print("Not Accepted");
+        //System.out.print("Not Accepted");
         System.exit(1);
         } }
 
@@ -71,11 +74,17 @@ public class Driver {
         CommonTokenStream tokens = new CommonTokenStream(lexer); // create a parser that feeds off the tokens buffer
         //System.out.println(tokens.getText());
         LittleParser parser = new LittleParser(tokens);
+        //parser.program();
+        SymbolExtractor extractor = new SymbolExtractor();
+        System.out.println(parser.program());
         
-            parser.removeErrorListeners(); // remove ConsoleErrorListener 
-            parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
-            parser.program();
-            System.out.print("Accepted");
+            // parser.removeErrorListeners(); // remove ConsoleErrorListener 
+            // parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
+            // parser.program();
+             //System.out.print("Accepted");
+
+            
+        //Add custom class here and then print out here
        
         //System.out.println(parser.program());
         //run parser, start rule on parser.program(); rule
@@ -84,4 +93,85 @@ public class Driver {
         //System.out.println(tree.toStringTree(parser)); // print LISP-style tree
 
     }
+}
+
+class SymbolExtractor extends LittleBaseListener {
+
+    private Stack<SymbolTable> symbolTableStack;
+
+    private SymbolTable current;
+
+    public SymbolExtractor() {
+        this.symbolTableStack = new Stack<>();
+        this.current = null;
+    }
+
+    @Override public void enterProgram(LittleParser.ProgramContext ctx) { 
+
+        this.symbolTableStack.push(new SymbolTable("GLOBAL"));
+        this.current = this.symbolTableStack.peek();
+
+    }
+
+    @Override public void exitProgram(LittleParser.ProgramContext ctx) { 
+
+        while(this.symbolTableStack.isEmpty() != true){
+            SymbolTable currentNode = this.symbolTableStack.pop();
+            System.out.printf("Symbol Table %s\n", currentNode.getScope());
+        }
+
+    }
+
+    @Override public void enterPgm_body(LittleParser.Pgm_bodyContext ctx) {
+
+        System.out.println("Entering Body");
+
+     }
+
+    @Override public void exitPgm_body(LittleParser.Pgm_bodyContext ctx) {
+
+        System.out.println("Leaving Body");
+
+     }
+
+}
+
+class SymbolTable {
+
+    private String scope;
+
+    private HashMap<String, SymbolAttributes> symbolTable;
+
+    private ArrayList<String> symbolName;
+
+    public SymbolTable(String scope) {
+        this.scope = scope;
+        this.symbolTable = new HashMap<>();
+        this.symbolName = new ArrayList<>();
+    }
+
+    public String getScope() {
+        return this.scope;
+    }
+
+}
+
+class SymbolAttributes {
+
+    String type;
+    String value;
+
+    public SymbolAttributes(String type, String value) {
+        this.type = type;
+        this.value = value;
+    }
+
+    public String getType(){
+        return this.type;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
 }
