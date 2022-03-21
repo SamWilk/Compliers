@@ -76,6 +76,8 @@ public class Driver {
         LittleParser parser = new LittleParser(tokens);
         //parser.program();
         SymbolExtractor extractor = new SymbolExtractor();
+        System.out.println("Hello World!");
+        System.exit(0);
         System.out.println(parser.program());
         
             // parser.removeErrorListeners(); // remove ConsoleErrorListener 
