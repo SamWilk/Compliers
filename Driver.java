@@ -4,14 +4,15 @@ import org.antlr.v4.tool.Rule;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+// import java.util.ArrayList;
+// import java.util.Collections;
+// import java.util.HashMap;
+// import java.util.List;
+// import java.util.Map;
+// import java.util.Scanner;
+//import java.util.Queue;
 import java.util.Stack;
-import java.io.*;
 
 public class Driver {
 
@@ -64,9 +65,22 @@ class SymbolExtractor extends LittleBaseListener {
 
     private SymbolTable current;
 
+    private Integer blockCounter;
+
+
     public SymbolExtractor() {
         this.symbolTableStack = new Stack<>();
         this.current = null;
+        this.blockCounter = 1;
+
+    }
+
+    public Integer getBlockCounter() {
+        return this.blockCounter;
+    }
+
+    public void iterateBlockCounter() {
+        this.blockCounter += 1;
     }
 
     public void print()
@@ -76,7 +90,7 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void enterProgram(LittleParser.ProgramContext ctx) { 
 
-        System.out.print("Entering Program");
+        //System.out.println("Entering Program");
         this.symbolTableStack.push(new SymbolTable("GLOBAL"));
         this.current = this.symbolTableStack.peek();
 
@@ -84,24 +98,115 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void exitProgram(LittleParser.ProgramContext ctx) { 
 
+        //Queue<SymbolTable> displayList = new LinkedList<>();
+        Stack<SymbolTable> displayList = new Stack<>();
+
         while(this.symbolTableStack.isEmpty() != true){
             SymbolTable currentNode = this.symbolTableStack.pop();
-            System.out.printf("Symbol Table %s\n", currentNode.getScope());
+            displayList.push(currentNode);
+            //System.out.printf("Symbol Table %s\n", currentNode.getScope());
+            //currentNode.print();
         }
+
+        while(displayList.isEmpty() != true){
+            SymbolTable currentNode = displayList.pop();
+            System.out.printf("Symbol Table %s\n", currentNode.getScope());
+            currentNode.print();
+            if(displayList.isEmpty() != true){
+                System.out.println();
+            }
+        }
+
 
     }
 
     @Override public void enterPgm_body(LittleParser.Pgm_bodyContext ctx) {
 
-        System.out.println("Entering Body");
-
      }
 
     @Override public void exitPgm_body(LittleParser.Pgm_bodyContext ctx) {
 
-        System.out.println("Leaving Body");
 
      }
+
+     @Override public void enterFunc_decl(LittleParser.Func_declContext ctx) {
+        this.symbolTableStack.push(new SymbolTable(ctx.id().IDENTIFIER().getText()));
+        this.current = this.symbolTableStack.peek();
+
+        if(ctx.param_decl_list().getChildCount() > 1){
+            this.current.addSymbol( ctx.param_decl_list().param_decl().id().getText(),
+                                    new SymbolAttributes(ctx.any_type().getText(), "0"));
+
+        LittleParser.Param_decl_tailContext current_id = ctx.param_decl_list().param_decl_tail();
+           
+        while(current_id.param_decl() != null)
+        {
+            this.current.addSymbol( current_id.param_decl().id().getText(),
+                                    new SymbolAttributes(ctx.any_type().getText(), "0"));
+            current_id = current_id.param_decl_tail();
+        }
+
+        }
+
+      }
+
+     @Override public void exitFunc_decl(LittleParser.Func_declContext ctx) { }
+
+
+    //Handles If_statements///////////////////
+     @Override public void enterIf_stmt(LittleParser.If_stmtContext ctx) {
+        // this.symbolTableStack.push(new SymbolTable(ctx.id().IDENTIFIER().getText()));
+        // this.current = this.symbolTableStack.peek();
+        // System.out.println("If Statement Entering");
+        // System.out.println("Cond: " + ctx.cond().getText());
+        String temp = "BLOCK " + getBlockCounter();
+        //temp.concat(" " + getBlockCounter());
+        this.symbolTableStack.push(new SymbolTable(temp));
+        this.current = this.symbolTableStack.peek();
+         //System.out.println("Entering BLOCK " + getBlockCounter());
+        iterateBlockCounter();
+      }
+	
+	 @Override public void exitIf_stmt(LittleParser.If_stmtContext ctx) { }
+
+      //handles else in if
+     @Override public void enterElse_part(LittleParser.Else_partContext ctx) { 
+        
+        if(ctx.stmt_list() != null){
+            //System.out.println("Else Statement Entering");
+
+            // System.out.println("Else: " + ctx);
+
+            String temp = "BLOCK " + getBlockCounter();
+            //temp.concat(" " + getBlockCounter());
+            this.symbolTableStack.push(new SymbolTable(temp));
+            this.current = this.symbolTableStack.peek();
+            //System.out.println("Entering BLOCK " + getBlockCounter());
+            iterateBlockCounter();
+
+        }
+
+
+        
+     }
+	
+	 @Override public void exitElse_part(LittleParser.Else_partContext ctx) { }
+    /////////////////////////////////////////
+
+    ////////////////// Handles While //////////////////////////
+    @Override public void enterWhile_stmt(LittleParser.While_stmtContext ctx) { 
+        //System.out.println("While Statement Entering");
+
+        String temp = "BLOCK " + getBlockCounter();
+        //temp.concat(" " + getBlockCounter());
+        this.symbolTableStack.push(new SymbolTable(temp));
+        this.current = this.symbolTableStack.peek();
+         //System.out.println("Entering BLOCK " + getBlockCounter());
+        iterateBlockCounter();
+    }
+	
+	@Override public void exitWhile_stmt(LittleParser.While_stmtContext ctx) { }
+    ///////////////////////////////////////////////////////////
      @Override public void enterString_decl(LittleParser.String_declContext ctx)
      {
         this.current.addSymbol( ctx.id().IDENTIFIER().getText(),
@@ -138,11 +243,14 @@ class SymbolTable {
         this.scope = scope;
         this.symbolTable = new HashMap<>();
         this.symbolName = new ArrayList<>();
+
     }
 
     public String getScope() {
         return this.scope;
     }
+
+    
 
     public void addSymbol(String symbolName, SymbolAttributes attributes)
     {
