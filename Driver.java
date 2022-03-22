@@ -76,13 +76,13 @@ public class Driver {
         LittleParser parser = new LittleParser(tokens);
         //parser.program();
         SymbolExtractor extractor = new SymbolExtractor();
-        System.out.println("Hello World!");
-        System.exit(0);
-        System.out.println(parser.program());
+        System.out.println("Just to make sure it is running");
+        //parser.program();
+        //System.out.println(parser.program());
         
-            // parser.removeErrorListeners(); // remove ConsoleErrorListener 
-            // parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
-            // parser.program();
+            parser.removeErrorListeners(); // remove ConsoleErrorListener 
+            parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
+            parser.program();
              //System.out.print("Accepted");
 
             
@@ -91,8 +91,8 @@ public class Driver {
         //System.out.println(parser.program());
         //run parser, start rule on parser.program(); rule
         //extend a class baseerrorlistener override syntaxerr(), not execpt try catch, remove error listener in parsers
-        //ParseTree tree = parser.init(); // begin parsing at init rule
-        //System.out.println(tree.toStringTree(parser)); // print LISP-style tree
+        ParseTree tree = parser.program(); // begin parsing at init rule
+        System.out.println(tree.toStringTree(parser)); // print LISP-style tree
 
     }
 }
@@ -110,6 +110,7 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void enterProgram(LittleParser.ProgramContext ctx) { 
 
+        System.out.print("Entering Program");
         this.symbolTableStack.push(new SymbolTable("GLOBAL"));
         this.current = this.symbolTableStack.peek();
 
