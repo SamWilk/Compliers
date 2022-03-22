@@ -157,7 +157,8 @@ class SymbolExtractor extends LittleBaseListener {
      @Override public void enterIf_stmt(LittleParser.If_stmtContext ctx) {
         // this.symbolTableStack.push(new SymbolTable(ctx.id().IDENTIFIER().getText()));
         // this.current = this.symbolTableStack.peek();
-        System.out.println("If Statement Entering");
+        // System.out.println("If Statement Entering");
+        // System.out.println("Cond: " + ctx.cond().getText());
         String temp = "BLOCK " + getBlockCounter();
         //temp.concat(" " + getBlockCounter());
         this.symbolTableStack.push(new SymbolTable(temp));
@@ -170,14 +171,23 @@ class SymbolExtractor extends LittleBaseListener {
 
       //handles else in if
      @Override public void enterElse_part(LittleParser.Else_partContext ctx) { 
-        System.out.println("Else Statement Entering");
+        
+        if(ctx.stmt_list() != null){
+            //System.out.println("Else Statement Entering");
 
-        String temp = "BLOCK " + getBlockCounter();
-        //temp.concat(" " + getBlockCounter());
-        this.symbolTableStack.push(new SymbolTable(temp));
-        this.current = this.symbolTableStack.peek();
-         //System.out.println("Entering BLOCK " + getBlockCounter());
-        iterateBlockCounter();
+            // System.out.println("Else: " + ctx);
+
+            String temp = "BLOCK " + getBlockCounter();
+            //temp.concat(" " + getBlockCounter());
+            this.symbolTableStack.push(new SymbolTable(temp));
+            this.current = this.symbolTableStack.peek();
+            //System.out.println("Entering BLOCK " + getBlockCounter());
+            iterateBlockCounter();
+
+        }
+
+
+        
      }
 	
 	 @Override public void exitElse_part(LittleParser.Else_partContext ctx) { }
@@ -185,7 +195,7 @@ class SymbolExtractor extends LittleBaseListener {
 
     ////////////////// Handles While //////////////////////////
     @Override public void enterWhile_stmt(LittleParser.While_stmtContext ctx) { 
-        System.out.println("While Statement Entering");
+        //System.out.println("While Statement Entering");
 
         String temp = "BLOCK " + getBlockCounter();
         //temp.concat(" " + getBlockCounter());
