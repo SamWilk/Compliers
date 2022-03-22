@@ -9,7 +9,7 @@
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "args": "inputs/sqrt.micro"
+            "args": "inputs/inputs/test5.micro"
         },
         {
             "type": "java",

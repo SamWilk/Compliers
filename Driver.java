@@ -1,11 +1,14 @@
 import org.antlr.v4.runtime.*; 
 import org.antlr.v4.runtime.tree.*;
+import org.antlr.v4.tool.Rule;
+
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
 import java.io.*;
@@ -38,59 +41,18 @@ public class Driver {
         }
         ANTLRInputStream input = new ANTLRInputStream(is); // a lexer that feeds off of input CharStream
         LittleLexer lexer = new LittleLexer(input); // create a buffer of tokens pulled from the lexer
-        // while(true){
-
-        //     Token token = lexer.nextToken();
-        //     if(token.getType() == LittleLexer.EOF){
-        //         break;
-        //     }
-        //     System.out.print("Token Type: ");
-        //     if(token.getType() == 3){
-        //         System.out.println("KEYWORD");
-        //     }
-        //     if(token.getType() == 5){
-        //         System.out.println("IDENTIFIER");
-        //     }
-        //     if(token.getType() == 4){
-        //         System.out.println("OPERATOR");
-        //     }
-        //     if(token.getType() == 6){
-        //         System.out.println("STRINGLITERAL");
-        //     }
-        //     if(token.getType() == 7){
-        //         System.out.println("INTLITERAL");
-        //     }
-        //     if(token.getType() == 8){
-        //         System.out.println("FLOATLITERAL");
-        //     }
-        //     if(token.getType() == 9){
-        //         continue;
-        //     }
-        //     // if(token.getType() == 10){
-        //     //     System.out.println("IDENTIFIER");
-        //     // }
-        //     System.out.println("Value: " + token.getText());
-        // }
+       
         CommonTokenStream tokens = new CommonTokenStream(lexer); // create a parser that feeds off the tokens buffer
         //System.out.println(tokens.getText());
         LittleParser parser = new LittleParser(tokens);
         //parser.program();
         SymbolExtractor extractor = new SymbolExtractor();
-        System.out.println(parser.program());
-        
-            // parser.removeErrorListeners(); // remove ConsoleErrorListener 
-            // parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
-            // parser.program();
-             //System.out.print("Accepted");
 
-            
-        //Add custom class here and then print out here
+        ParseTree tree = parser.program();
        
-        //System.out.println(parser.program());
-        //run parser, start rule on parser.program(); rule
-        //extend a class baseerrorlistener override syntaxerr(), not execpt try catch, remove error listener in parsers
-        //ParseTree tree = parser.init(); // begin parsing at init rule
-        //System.out.println(tree.toStringTree(parser)); // print LISP-style tree
+        ParseTreeWalker.DEFAULT.walk(extractor, tree);
+
+        extractor.print();
 
     }
 }
@@ -104,6 +66,11 @@ class SymbolExtractor extends LittleBaseListener {
     public SymbolExtractor() {
         this.symbolTableStack = new Stack<>();
         this.current = null;
+    }
+
+    public void print()
+    {
+        current.print();
     }
 
     @Override public void enterProgram(LittleParser.ProgramContext ctx) { 
@@ -133,7 +100,28 @@ class SymbolExtractor extends LittleBaseListener {
         System.out.println("Leaving Body");
 
      }
+     @Override public void enterString_decl(LittleParser.String_declContext ctx)
+     {
+        this.current.addSymbol( ctx.id().IDENTIFIER().getText(),
+                                new SymbolAttributes( "STRING", ctx.str().STRINGLITERAL().getText() ) 
+                                );
+     }
+     @Override public void enterVar_decl(LittleParser.Var_declContext ctx) 
+     {
+         
+        this.current.addSymbol( ctx.id_list().id().getText(), 
+                                new SymbolAttributes( ctx.any_type().getText(), "0" )
+                                );
 
+        LittleParser.Id_tailContext current_id = ctx.id_list().id_tail();
+        
+        while(current_id.id() != null)
+        {
+            this.current.addSymbol( current_id.id().getText(),
+                                    new SymbolAttributes(ctx.any_type().getText(), "0"));
+            current_id = current_id.id_tail();
+        }
+     }
 }
 
 class SymbolTable {
@@ -154,6 +142,33 @@ class SymbolTable {
         return this.scope;
     }
 
+    public void addSymbol(String symbolName, SymbolAttributes attributes)
+    {
+        if(this.symbolTable.containsKey(symbolName))
+        {
+            System.out.println("DECLARATION ERROR " + symbolName);
+            System.exit(0);
+        }
+
+        this.symbolTable.put(symbolName, attributes);
+        this.symbolName.add(symbolName);
+        
+    }
+    public void print()
+    {
+        // ! Weird error, table is auto sorting by alphabetical order.
+        symbolTable.forEach((name, attr) -> {
+            if(attr.type.equals("STRING"))
+            {
+                System.out.println("name " + name + " type " + attr.type + " value " + attr.value);
+            }
+            else
+            {
+                System.out.println("name " + name + " type " + attr.type);
+            }
+        });
+        
+    }
 }
 
 class SymbolAttributes {
