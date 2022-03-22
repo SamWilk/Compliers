@@ -132,7 +132,7 @@ class SymbolExtractor extends LittleBaseListener {
         // System.out.printf("Number of Params: %s\n", ctx.param_decl_list().length());
         while(ctx.param_decl_list().param_decl() != null){
             System.out.printf("Params: %s\n", ctx.param_decl_list().param_decl().getText());
-    
+            
         }
         if(ctx.param_decl_list().param_decl() != null){
             System.out.printf("Params: %s\n", ctx.param_decl_list().param_decl().getText());
