@@ -54,6 +54,7 @@ public class Driver {
 
         extractor.print();
 
+
     }
 }
 
@@ -75,6 +76,7 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void enterProgram(LittleParser.ProgramContext ctx) { 
 
+        System.out.print("Entering Program");
         this.symbolTableStack.push(new SymbolTable("GLOBAL"));
         this.current = this.symbolTableStack.peek();
 
