@@ -65,9 +65,22 @@ class SymbolExtractor extends LittleBaseListener {
 
     private SymbolTable current;
 
+    private Integer blockCounter;
+
+
     public SymbolExtractor() {
         this.symbolTableStack = new Stack<>();
         this.current = null;
+        this.blockCounter = 1;
+
+    }
+
+    public Integer getBlockCounter() {
+        return this.blockCounter;
+    }
+
+    public void iterateBlockCounter() {
+        this.blockCounter += 1;
     }
 
     public void print()
@@ -109,38 +122,29 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void enterPgm_body(LittleParser.Pgm_bodyContext ctx) {
 
-        //System.out.println("Entering Body");
-        //System.out.printf("Function Name: %s\n", ctx.func_declarations());
-        //ctx.id().IDENTIFIER().getText();
-        // this.symbolTableStack.push(new SymbolTable())
-
      }
 
     @Override public void exitPgm_body(LittleParser.Pgm_bodyContext ctx) {
 
-        //System.out.println("Leaving Body");
 
      }
 
      @Override public void enterFunc_decl(LittleParser.Func_declContext ctx) {
-        //System.out.printf("Function Name: %s\n", ctx.id().IDENTIFIER().getText());
         this.symbolTableStack.push(new SymbolTable(ctx.id().IDENTIFIER().getText()));
         this.current = this.symbolTableStack.peek();
 
-        System.out.printf("Table : %s\n", ctx.id().IDENTIFIER().getText());
+        if(ctx.param_decl_list().getChildCount() > 1){
+            this.current.addSymbol( ctx.param_decl_list().param_decl().id().getText(),
+                                    new SymbolAttributes(ctx.any_type().getText(), "0"));
 
-        // System.out.printf("Number of Params: %s\n", ctx.param_decl_list().length());
-        while(ctx.param_decl_list().param_decl() != null){
-            System.out.printf("Params: %s\n", ctx.param_decl_list().param_decl().getText());
-            
+        LittleParser.Param_decl_tailContext current_id = ctx.param_decl_list().param_decl_tail();
+           
+        while(current_id.param_decl() != null)
+        {
+            this.current.addSymbol( current_id.param_decl().id().getText(),
+                                    new SymbolAttributes(ctx.any_type().getText(), "0"));
+            current_id = current_id.param_decl_tail();
         }
-        if(ctx.param_decl_list().param_decl() != null){
-            System.out.printf("Params: %s\n", ctx.param_decl_list().param_decl().getText());
-        }else{
-            if(ctx.param_decl_list().param_decl_tail() != null){
-                System.out.printf("Params: %s\n", ctx.param_decl_list().param_decl_tail().getText());
-
-            }
 
         }
 
@@ -149,6 +153,50 @@ class SymbolExtractor extends LittleBaseListener {
      @Override public void exitFunc_decl(LittleParser.Func_declContext ctx) { }
 
 
+    //Handles If_statements///////////////////
+     @Override public void enterIf_stmt(LittleParser.If_stmtContext ctx) {
+        // this.symbolTableStack.push(new SymbolTable(ctx.id().IDENTIFIER().getText()));
+        // this.current = this.symbolTableStack.peek();
+        System.out.println("If Statement Entering");
+        String temp = "BLOCK " + getBlockCounter();
+        //temp.concat(" " + getBlockCounter());
+        this.symbolTableStack.push(new SymbolTable(temp));
+        this.current = this.symbolTableStack.peek();
+         //System.out.println("Entering BLOCK " + getBlockCounter());
+        iterateBlockCounter();
+      }
+	
+	 @Override public void exitIf_stmt(LittleParser.If_stmtContext ctx) { }
+
+      //handles else in if
+     @Override public void enterElse_part(LittleParser.Else_partContext ctx) { 
+        System.out.println("Else Statement Entering");
+
+        String temp = "BLOCK " + getBlockCounter();
+        //temp.concat(" " + getBlockCounter());
+        this.symbolTableStack.push(new SymbolTable(temp));
+        this.current = this.symbolTableStack.peek();
+         //System.out.println("Entering BLOCK " + getBlockCounter());
+        iterateBlockCounter();
+     }
+	
+	 @Override public void exitElse_part(LittleParser.Else_partContext ctx) { }
+    /////////////////////////////////////////
+
+    ////////////////// Handles While //////////////////////////
+    @Override public void enterWhile_stmt(LittleParser.While_stmtContext ctx) { 
+        System.out.println("While Statement Entering");
+
+        String temp = "BLOCK " + getBlockCounter();
+        //temp.concat(" " + getBlockCounter());
+        this.symbolTableStack.push(new SymbolTable(temp));
+        this.current = this.symbolTableStack.peek();
+         //System.out.println("Entering BLOCK " + getBlockCounter());
+        iterateBlockCounter();
+    }
+	
+	@Override public void exitWhile_stmt(LittleParser.While_stmtContext ctx) { }
+    ///////////////////////////////////////////////////////////
      @Override public void enterString_decl(LittleParser.String_declContext ctx)
      {
         this.current.addSymbol( ctx.id().IDENTIFIER().getText(),
@@ -185,11 +233,14 @@ class SymbolTable {
         this.scope = scope;
         this.symbolTable = new HashMap<>();
         this.symbolName = new ArrayList<>();
+
     }
 
     public String getScope() {
         return this.scope;
     }
+
+    
 
     public void addSymbol(String symbolName, SymbolAttributes attributes)
     {
