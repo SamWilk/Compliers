@@ -4,14 +4,15 @@ import org.antlr.v4.tool.Rule;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+// import java.util.ArrayList;
+// import java.util.Collections;
+// import java.util.HashMap;
+// import java.util.List;
+// import java.util.Map;
+// import java.util.Scanner;
+//import java.util.Queue;
 import java.util.Stack;
-import java.io.*;
 
 public class Driver {
 
@@ -76,7 +77,7 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void enterProgram(LittleParser.ProgramContext ctx) { 
 
-        System.out.print("Entering Program");
+        //System.out.println("Entering Program");
         this.symbolTableStack.push(new SymbolTable("GLOBAL"));
         this.current = this.symbolTableStack.peek();
 
@@ -84,24 +85,70 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void exitProgram(LittleParser.ProgramContext ctx) { 
 
+        //Queue<SymbolTable> displayList = new LinkedList<>();
+        Stack<SymbolTable> displayList = new Stack<>();
+
         while(this.symbolTableStack.isEmpty() != true){
             SymbolTable currentNode = this.symbolTableStack.pop();
-            System.out.printf("Symbol Table %s\n", currentNode.getScope());
+            displayList.push(currentNode);
+            //System.out.printf("Symbol Table %s\n", currentNode.getScope());
+            //currentNode.print();
         }
+
+        while(displayList.isEmpty() != true){
+            SymbolTable currentNode = displayList.pop();
+            System.out.printf("Symbol Table %s\n", currentNode.getScope());
+            currentNode.print();
+            if(displayList.isEmpty() != true){
+                System.out.println();
+            }
+        }
+
 
     }
 
     @Override public void enterPgm_body(LittleParser.Pgm_bodyContext ctx) {
 
-        System.out.println("Entering Body");
+        //System.out.println("Entering Body");
+        //System.out.printf("Function Name: %s\n", ctx.func_declarations());
+        //ctx.id().IDENTIFIER().getText();
+        // this.symbolTableStack.push(new SymbolTable())
 
      }
 
     @Override public void exitPgm_body(LittleParser.Pgm_bodyContext ctx) {
 
-        System.out.println("Leaving Body");
+        //System.out.println("Leaving Body");
 
      }
+
+     @Override public void enterFunc_decl(LittleParser.Func_declContext ctx) {
+        //System.out.printf("Function Name: %s\n", ctx.id().IDENTIFIER().getText());
+        this.symbolTableStack.push(new SymbolTable(ctx.id().IDENTIFIER().getText()));
+        this.current = this.symbolTableStack.peek();
+
+        System.out.printf("Table : %s\n", ctx.id().IDENTIFIER().getText());
+
+        // System.out.printf("Number of Params: %s\n", ctx.param_decl_list().length());
+        while(ctx.param_decl_list().param_decl() != null){
+            System.out.printf("Params: %s\n", ctx.param_decl_list().param_decl().getText());
+    
+        }
+        if(ctx.param_decl_list().param_decl() != null){
+            System.out.printf("Params: %s\n", ctx.param_decl_list().param_decl().getText());
+        }else{
+            if(ctx.param_decl_list().param_decl_tail() != null){
+                System.out.printf("Params: %s\n", ctx.param_decl_list().param_decl_tail().getText());
+
+            }
+
+        }
+
+      }
+
+     @Override public void exitFunc_decl(LittleParser.Func_declContext ctx) { }
+
+
      @Override public void enterString_decl(LittleParser.String_declContext ctx)
      {
         this.current.addSymbol( ctx.id().IDENTIFIER().getText(),
