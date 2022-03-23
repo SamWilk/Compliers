@@ -122,6 +122,7 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void enterPgm_body(LittleParser.Pgm_bodyContext ctx) {
 
+
      }
 
     @Override public void exitPgm_body(LittleParser.Pgm_bodyContext ctx) {
@@ -222,8 +223,9 @@ class SymbolExtractor extends LittleBaseListener {
 
         LittleParser.Id_tailContext current_id = ctx.id_list().id_tail();
         
-        while(current_id.id() != null)
-        {
+        while(current_id.id() != null )
+        {   
+            
             this.current.addSymbol( current_id.id().getText(),
                                     new SymbolAttributes(ctx.any_type().getText(), "0"));
             current_id = current_id.id_tail();
@@ -235,13 +237,13 @@ class SymbolTable {
 
     private String scope;
 
-    private HashMap<String, SymbolAttributes> symbolTable;
+    private LinkedHashMap<String, SymbolAttributes> symbolTable;
 
     private ArrayList<String> symbolName;
 
     public SymbolTable(String scope) {
         this.scope = scope;
-        this.symbolTable = new HashMap<>();
+        this.symbolTable = new LinkedHashMap<>();
         this.symbolName = new ArrayList<>();
 
     }
