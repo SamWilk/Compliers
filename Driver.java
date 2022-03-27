@@ -111,7 +111,7 @@ class SymbolExtractor extends LittleBaseListener {
 
         while(displayList.isEmpty() != true){
             SymbolTable currentNode = displayList.pop();
-            System.out.printf("Symbol Table %s\n", currentNode.getScope());
+            System.out.printf("Symbol table %s\n", currentNode.getScope());
             currentNode.print();
             if(displayList.isEmpty() != true){
                 System.out.println();

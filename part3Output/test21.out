@@ -1,4 +1,4 @@
-Symbol Table GLOBAL
+Symbol table GLOBAL
 name dummy type STRING value "abcde"
 name n type FLOAT
 name x1 type FLOAT
@@ -8,7 +8,7 @@ name dfx type FLOAT
 name error type FLOAT
 name i type INT
 
-Symbol Table main
+Symbol table main
 
-Symbol Table BLOCK 1
+Symbol table BLOCK 1
 name error1 type INT
