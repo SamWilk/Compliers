@@ -25,7 +25,7 @@ public class Driver {
         // System.err.println("rule stack: "+stack);
         // System.err.println("line "+line+":"+charPositionInLine+" at "+
         // offendingSymbol+": "+msg);
-        //System.out.print("Not Accepted");
+        System.out.print("Not Accepted");
         System.exit(1);
         } }
 
@@ -46,8 +46,16 @@ public class Driver {
         CommonTokenStream tokens = new CommonTokenStream(lexer); // create a parser that feeds off the tokens buffer
         //System.out.println(tokens.getText());
         LittleParser parser = new LittleParser(tokens);
+
+        
+            // parser.removeErrorListeners(); // remove ConsoleErrorListener 
+            // parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
+            // parser.program();
+            // System.out.print("Accepted");
         //parser.program();
         SymbolExtractor extractor = new SymbolExtractor();
+
+        
 
         ParseTree tree = parser.program();
        
