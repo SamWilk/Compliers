@@ -210,13 +210,11 @@ class SymbolExtractor extends LittleBaseListener {
      }
      @Override public void enterVar_decl(LittleParser.Var_declContext ctx) 
      {
-         //System.out.println("Printing: " + ctx.id_list().getText());
         this.current.addSymbol( ctx.id_list().id().getText(), 
                                 new SymbolAttributes( ctx.any_type().getText(), "0" )
                                 );
 
         LittleParser.Id_tailContext current_id = ctx.id_list().id_tail();
-        //System.out.println("Type: "+ ctx.any_type().getText() + " : " + ctx.id_list().id().getText() );
         while(current_id.id() != null )
         {   
             
