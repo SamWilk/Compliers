@@ -276,6 +276,32 @@ class SymbolExtractor extends LittleBaseListener {
      @Override public void enterRead_stmt(LittleParser.Read_stmtContext ctx) {
          //System.out.println("READ: " + ctx.id_list().getText());
          String appendString = "sys read";
+         if(ctx.id_list().getText().contains(",") != true){
+            for(int i = 0; i < TinyList.size(); i++){
+                String tokens [] = TinyList.get(i).getValue().split(" ");
+                if(tokens[1].equals(ctx.id_list().getText()) == true){
+                    String type = TinyList.get(i).getType();
+                    switch(type){
+                        case "INT":
+                            appendString = appendString.concat("i " + ctx.id_list().getText());
+                            CustomNode newNode1 = new CustomNode(appendString, "NA");
+                            TinyList.add(newNode1);
+                            break;
+                        case "FLOAT":
+                            appendString = appendString.concat("f " + ctx.id_list().getText());
+                            CustomNode newNode2 = new CustomNode(appendString, "NA");
+                            TinyList.add(newNode2);
+                            break;
+                        default: 
+                            System.out.println("No type");
+                    };
+                    break;
+                }
+            }
+         }
+         else{
+
+         }
 
       }
      //////////////////////////////////////////////////////////////////////////////////
