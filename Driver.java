@@ -67,6 +67,24 @@ public class Driver {
     }
 }
 
+//For arraylist I am using, not an ASTree node
+class CustomNode {
+    private String value;
+    private String type;
+    public CustomNode(String value, String type){
+        this.value = value;
+        this.type = type;
+    }
+
+    public String getValue(){
+        return this.value;
+    }
+
+    public String getType(){
+        return this.type;
+    }
+}
+
 class SymbolExtractor extends LittleBaseListener {
 
     private Stack<SymbolTable> symbolTableStack;
@@ -75,7 +93,7 @@ class SymbolExtractor extends LittleBaseListener {
 
     private Integer blockCounter;
 
-    private ArrayList<String> TinyList = new ArrayList();
+    private ArrayList<CustomNode> TinyList = new ArrayList();
 
 
     public SymbolExtractor() {
@@ -101,7 +119,7 @@ class SymbolExtractor extends LittleBaseListener {
 
     public void printTiny(){
         TinyList.forEach((tinyOut) -> {
-            System.out.println(tinyOut);
+            System.out.println(tinyOut.getValue());
         });
     }
 
@@ -217,7 +235,8 @@ class SymbolExtractor extends LittleBaseListener {
         String appendString = "";
         appendString = appendString.concat("str " + 
                 ctx.id().IDENTIFIER().getText() +" "+ ctx.str().getText());
-        TinyList.add(appendString);
+        CustomNode newNode = new CustomNode(appendString, "STRING");
+        TinyList.add(newNode);
      }
      ///////////////////////// Int and Floats ////////////////////////////
      @Override public void enterVar_decl(LittleParser.Var_declContext ctx) 
@@ -232,12 +251,14 @@ class SymbolExtractor extends LittleBaseListener {
             for(int i = 0; i < tokens.length; i++){
                 String appendString = "";
                 appendString = appendString.concat("var " + tokens[i]);
-                TinyList.add(appendString);
+                CustomNode newNode = new CustomNode(appendString, ctx.any_type().getText());
+                TinyList.add(newNode);
             }
         }else{
             String appendString = "";
             appendString = appendString.concat("var " + variables);
-            TinyList.add(appendString);
+            CustomNode newNode = new CustomNode(appendString, ctx.any_type().getText());
+            TinyList.add(newNode);
         }
 
         LittleParser.Id_tailContext current_id = ctx.id_list().id_tail();
@@ -250,6 +271,56 @@ class SymbolExtractor extends LittleBaseListener {
         }
      }
      ////////////////////////////////////////////////////////////////////////
+
+     ///////////////////////////////// READ FUNC ///////////////////////////////////////
+     @Override public void enterRead_stmt(LittleParser.Read_stmtContext ctx) {
+         //System.out.println("READ: " + ctx.id_list().getText());
+         String appendString = "sys read";
+
+      }
+     //////////////////////////////////////////////////////////////////////////////////
+
+     ///////////////////////////////// WRITE FUNC ///////////////////////////////////////
+     @Override public void enterWrite_stmt(LittleParser.Write_stmtContext ctx) { 
+        String appendString = "sys write";
+        if(ctx.id_list().getText().contains(",") != true){
+            for(int i = 0; i < TinyList.size(); i++){
+                String tokens [] = TinyList.get(i).getValue().split(" ");
+                //Always Check tokens[1]
+                if(tokens[1].equals(ctx.id_list().getText()) == true){
+                    String type = TinyList.get(i).getType();
+                    switch(type){
+                        case "STRING": 
+                            appendString = appendString.concat("s " + ctx.id_list().getText());
+                            CustomNode newNode = new CustomNode(appendString, "NA");
+                            TinyList.add(newNode);
+                            break;
+                        case "INT":
+                            appendString = appendString.concat("i " + ctx.id_list().getText());
+                            CustomNode newNode1 = new CustomNode(appendString, "NA");
+                            TinyList.add(newNode1);
+                            break;
+                        case "FLOAT":
+                            appendString = appendString.concat("f " + ctx.id_list().getText());
+                            CustomNode newNode2 = new CustomNode(appendString, "NA");
+                            TinyList.add(newNode2);
+                            break;
+                        default: 
+                            System.out.println("No type");
+                    };
+                    break;
+                }
+            }
+        }else{
+            //For Mutliple params in write
+            System.out.println();
+            System.out.println("Multi params");
+            System.out.println();
+        }
+        
+        
+     }
+     //////////////////////////////////////////////////////////////////////////////////
 
      ///////////////////////// Assignment Statement //////////////////////////
      @Override public void enterAssign_stmt(LittleParser.Assign_stmtContext ctx) {
