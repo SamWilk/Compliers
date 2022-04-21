@@ -25,7 +25,7 @@ public class Driver {
         // System.err.println("rule stack: "+stack);
         // System.err.println("line "+line+":"+charPositionInLine+" at "+
         // offendingSymbol+": "+msg);
-        //System.out.print("Not Accepted");
+        System.out.print("Not Accepted");
         System.exit(1);
         } }
 
@@ -46,13 +46,21 @@ public class Driver {
         CommonTokenStream tokens = new CommonTokenStream(lexer); // create a parser that feeds off the tokens buffer
         //System.out.println(tokens.getText());
         LittleParser parser = new LittleParser(tokens);
+
+        
+            // parser.removeErrorListeners(); // remove ConsoleErrorListener 
+            // parser.addErrorListener(new VerboseListener()); // add ours parser.prog(); // parse as usual
+            // parser.program();
+            // System.out.print("Accepted");
         //parser.program();
         SymbolExtractor extractor = new SymbolExtractor();
+
+        
 
         ParseTree tree = parser.program();
        
         ParseTreeWalker.DEFAULT.walk(extractor, tree);
-
+        extractor.printTiny();
         //extractor.print();
 
 
@@ -66,6 +74,8 @@ class SymbolExtractor extends LittleBaseListener {
     private SymbolTable current;
 
     private Integer blockCounter;
+
+    private ArrayList<String> TinyList = new ArrayList();
 
 
     public SymbolExtractor() {
@@ -89,6 +99,12 @@ class SymbolExtractor extends LittleBaseListener {
         current.print();
     }
 
+    public void printTiny(){
+        TinyList.forEach((tinyOut) -> {
+            System.out.println(tinyOut);
+        });
+    }
+
     @Override public void enterProgram(LittleParser.ProgramContext ctx) { 
 
         //System.out.println("Entering Program");
@@ -99,16 +115,15 @@ class SymbolExtractor extends LittleBaseListener {
 
     @Override public void exitProgram(LittleParser.ProgramContext ctx) { 
 
-        //Queue<SymbolTable> displayList = new LinkedList<>();
         Stack<SymbolTable> displayList = new Stack<>();
 
         while(this.symbolTableStack.isEmpty() != true){
             SymbolTable currentNode = this.symbolTableStack.pop();
             displayList.push(currentNode);
-            //System.out.printf("Symbol Table %s\n", currentNode.getScope());
-            //currentNode.print();
+           
         }
 
+        /*
         while(displayList.isEmpty() != true){
             SymbolTable currentNode = displayList.pop();
             System.out.printf("Symbol table %s\n", currentNode.getScope());
@@ -117,7 +132,7 @@ class SymbolExtractor extends LittleBaseListener {
                 System.out.println();
             }
         }
-
+        */
 
     }
 
@@ -199,16 +214,33 @@ class SymbolExtractor extends LittleBaseListener {
         this.current.addSymbol( ctx.id().IDENTIFIER().getText(),
                                 new SymbolAttributes( "STRING", ctx.str().STRINGLITERAL().getText() ) 
                                 );
+        String appendString = "";
+        appendString = appendString.concat("str " + 
+                ctx.id().IDENTIFIER().getText() +" "+ ctx.str().getText());
+        TinyList.add(appendString);
      }
+     ///////////////////////// Int and Floats ////////////////////////////
      @Override public void enterVar_decl(LittleParser.Var_declContext ctx) 
      {
-         //System.out.println("Printing: " + ctx.id_list().getText());
         this.current.addSymbol( ctx.id_list().id().getText(), 
                                 new SymbolAttributes( ctx.any_type().getText(), "0" )
                                 );
 
+        String variables = ctx.id_list().getText();
+        if(variables.contains(",") == true){
+            String tokens[] = variables.split(",");
+            for(int i = 0; i < tokens.length; i++){
+                String appendString = "";
+                appendString = appendString.concat("var " + tokens[i]);
+                TinyList.add(appendString);
+            }
+        }else{
+            String appendString = "";
+            appendString = appendString.concat("var " + variables);
+            TinyList.add(appendString);
+        }
+
         LittleParser.Id_tailContext current_id = ctx.id_list().id_tail();
-        //System.out.println("Type: "+ ctx.any_type().getText() + " : " + ctx.id_list().id().getText() );
         while(current_id.id() != null )
         {   
             
@@ -217,10 +249,22 @@ class SymbolExtractor extends LittleBaseListener {
             current_id = current_id.id_tail();
         }
      }
+     ////////////////////////////////////////////////////////////////////////
 
      ///////////////////////// Assignment Statement //////////////////////////
      @Override public void enterAssign_stmt(LittleParser.Assign_stmtContext ctx) {
          //System.out.println("Assigning Value: " + ctx.assign_expr().getText());
+         String [] tokens = ctx.assign_expr().getText().split(":=");
+         for(int i = 0; i < tokens.length; i++){
+             //System.out.println("Token: " + tokens[i]);
+         }
+
+         /*
+         AST tree = new AST();
+         tree.setAssignment(tokens[0]);
+         tree.createTree(tokens[1]);
+         System.out.println("Tree: " + tree.getRoot().temp + " : " + tree.getRoot().left.temp + " : " + tree.getRoot().right.temp);
+         */
       }
 	
 	 @Override public void exitAssign_stmt(LittleParser.Assign_stmtContext ctx) { }
@@ -296,3 +340,68 @@ class SymbolAttributes {
     }
 
 }
+
+// class AST {
+
+//     public class Node{
+
+//         public String temp;
+//         public String oprand;
+//         public String code;
+//         public Node left;
+//         public Node right;
+    
+//         public Node(String node){
+//             this.temp = node;
+//             this.left = null;
+//             this.right = null;
+//         }
+    
+//     }
+
+//     public Node root;
+
+//     public AST(){
+//         Node node = new Node(":=");
+//         node.code = "STORE";
+//         node.oprand = ":=";
+//         this.root = node;
+//     }
+
+//     public Node getRoot(){
+//         return this.root;
+//     }
+
+//     public void setAssignment(String temp){
+//         Node newNode = new Node(temp);
+//         root.left = newNode;
+//     }
+
+//     public void createTree(String rightHand){
+//         String [] tokens;
+//         if(rightHand.contains("+") == true){
+//             tokens = rightHand.split("\\+");
+//             Node newNode = new Node("+");
+//         Node current = root;
+//         while(current.right != null){
+//             current = current.right;
+//         }
+//         current.right = newNode;
+//         }
+//         if(rightHand.contains("*") == true){
+//             tokens = rightHand.split("\\*");
+//             Node newNode = new Node("*");
+//         Node current = root;
+//         while(current.right != null){
+//             current = current.right;
+//         }
+//         current.right = newNode;
+//         }
+        
+
+        
+//     }
+
+
+// }
+
