@@ -284,12 +284,12 @@ class SymbolExtractor extends LittleBaseListener {
                     switch(type){
                         case "INT":
                             appendString = appendString.concat("i " + ctx.id_list().getText());
-                            CustomNode newNode1 = new CustomNode(appendString, "NA");
+                            CustomNode newNode1 = new CustomNode(appendString, null);
                             TinyList.add(newNode1);
                             break;
                         case "FLOAT":
                             appendString = appendString.concat("f " + ctx.id_list().getText());
-                            CustomNode newNode2 = new CustomNode(appendString, "NA");
+                            CustomNode newNode2 = new CustomNode(appendString, null);
                             TinyList.add(newNode2);
                             break;
                         default: 
@@ -318,17 +318,17 @@ class SymbolExtractor extends LittleBaseListener {
                     switch(type){
                         case "STRING": 
                             appendString = appendString.concat("s " + ctx.id_list().getText());
-                            CustomNode newNode = new CustomNode(appendString, "NA");
+                            CustomNode newNode = new CustomNode(appendString, null);
                             TinyList.add(newNode);
                             break;
                         case "INT":
                             appendString = appendString.concat("i " + ctx.id_list().getText());
-                            CustomNode newNode1 = new CustomNode(appendString, "NA");
+                            CustomNode newNode1 = new CustomNode(appendString, null);
                             TinyList.add(newNode1);
                             break;
                         case "FLOAT":
                             appendString = appendString.concat("f " + ctx.id_list().getText());
-                            CustomNode newNode2 = new CustomNode(appendString, "NA");
+                            CustomNode newNode2 = new CustomNode(appendString, null);
                             TinyList.add(newNode2);
                             break;
                         default: 
