@@ -60,6 +60,7 @@ public class Driver {
         ParseTree tree = parser.program();
        
         ParseTreeWalker.DEFAULT.walk(extractor, tree);
+        
         extractor.printTiny();
         //extractor.print();
 
@@ -94,6 +95,10 @@ class SymbolExtractor extends LittleBaseListener {
     private Integer blockCounter;
 
     private ArrayList<CustomNode> TinyList = new ArrayList();
+
+    private ArrayList<AST> trees = new ArrayList<AST>();
+
+    private AST current_tree;
 
 
     public SymbolExtractor() {
@@ -349,21 +354,23 @@ class SymbolExtractor extends LittleBaseListener {
      //////////////////////////////////////////////////////////////////////////////////
 
      ///////////////////////// Assignment Statement //////////////////////////
-     @Override public void enterAssign_stmt(LittleParser.Assign_stmtContext ctx) {
+     @Override public void enterAssign_expr(LittleParser.Assign_exprContext ctx) {
          //System.out.println("Assigning Value: " + ctx.assign_expr().getText());
-         String [] tokens = ctx.assign_expr().getText().split(":=");
-         for(int i = 0; i < tokens.length; i++){
-             //System.out.println("Token: " + tokens[i]);
-         }
-
-         /*
-         AST tree = new AST();
-         tree.setAssignment(tokens[0]);
-         tree.createTree(tokens[1]);
-         System.out.println("Tree: " + tree.getRoot().temp + " : " + tree.getRoot().left.temp + " : " + tree.getRoot().right.temp);
-         */
+         current_tree = new AST(":=");
+         current_tree.current.left = new Node(ctx.id().IDENTIFIER().getText());
       }
-	
+      @Override public void enterFactor(LittleParser.FactorContext ctx)
+      {
+
+      }
+      @Override public void enterAddop(LittleParser.AddopContext ctx)
+      {
+        current_tree.set_current(new Node(ctx.getText()));
+      }
+      @Override public void enterMulop(LittleParser.MulopContext ctx)
+      {
+        current_tree.set_current(new Node(ctx.getText()));
+      }
 	 @Override public void exitAssign_stmt(LittleParser.Assign_stmtContext ctx) { }
     //////////////////////////////////////////////////////////////////////////
 }

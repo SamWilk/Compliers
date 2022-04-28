@@ -9,13 +9,13 @@
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "args": "inputs/inputs/test5.micro"
+            "args": "Compiler_Test_Case.micro"
         },
         {
             "type": "java",
             "name": "Launch Driver",
             "request": "launch",
-            "mainClass": "Driver",
+            "mainClass": "Driver.java",
             "projectName": "Compliers_18e20ea2",
             "args": "fibonacci.micro"
         }
