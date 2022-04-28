@@ -274,7 +274,6 @@ class SymbolExtractor extends LittleBaseListener {
 
      ///////////////////////////////// READ FUNC ///////////////////////////////////////
      @Override public void enterRead_stmt(LittleParser.Read_stmtContext ctx) {
-         //System.out.println("READ: " + ctx.id_list().getText());
          String appendString = "sys read";
          if(ctx.id_list().getText().contains(",") != true){
             for(int i = 0; i < TinyList.size(); i++){
