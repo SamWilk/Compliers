@@ -359,9 +359,18 @@ class SymbolExtractor extends LittleBaseListener {
          current_tree = new AST(":=");
          current_tree.current.left = new Node(ctx.id().IDENTIFIER().getText());
       }
+      @Override public void enterExpr(LittleParser.ExprContext ctx)
+      {
+        current_tree.current.right = new Node(ctx.factor().postfix_expr().primary().getText());
+      }
+      @Override public void enterExpr_prefix(LittleParser.Expr_prefixContext ctx)
+      {
+          
+          current_tree.current.left = new Node(ctx.factor().postfix_expr().primary().getText());
+      }
       @Override public void enterFactor(LittleParser.FactorContext ctx)
       {
-
+        
       }
       @Override public void enterAddop(LittleParser.AddopContext ctx)
       {
