@@ -60,9 +60,10 @@ public class Driver {
         ParseTreeWalker.DEFAULT.walk(extractor, tree);
         
         extractor.printTiny();
-        //extractor.print();
 
+        var newTree = new AST().visitProgram(parser.program());
 
+        System.out.println(newTree.toString());
     }
 }
 

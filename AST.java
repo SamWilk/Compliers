@@ -1,541 +1,326 @@
-import org.antlr.v4.misc.Graph.Node;
 
-class AST{
 
-    class BuildAstVisitor extends LittleBaseVisitor<Node>
+class AST extends LittleBaseVisitor<Node>
+{
+    @Override public Node visitProgram(LittleParser.ProgramContext ctx)
     {
-        @Override public Node visitProgram(LittleParser.ProgramContext ctx)
+        IdNode top = new IdNode(ctx.id().getText());
+        top.setRight(visit(ctx.pgm_body()));
+        return top;
+    }
+    @Override public Node visitPgm_body(LittleParser.Pgm_bodyContext ctx)
+    {
+        Node node;
+        Node current;
+        if(!ctx.decl().isEmpty())
         {
-            IdNode top = new IdNode(ctx.id().getText());
-            top.setRight(visit(ctx.pgm_body()));
-            return top;
-        }
-        @Override public Node visitPgm_body(LittleParser.Pgm_bodyContext ctx)
-        {
-            Node node;
-            Node current;
-            if(!ctx.decl().isEmpty())
+            node = visit(ctx.decl());
+            current = node;
+            while(current.getRight() != null)
             {
-                node = visit(ctx.decl());
-                current = node;
-                while(current.getRight() != null)
-                {
-                    current = current.getRight();
-                }
-                current.setRight(visit(ctx.func_declarations()));
+                current = current.getRight();
             }
-            else
-            {
-                node = visit(ctx.func_declarations());
-            }
-            return node;
+            current.setRight(visit(ctx.func_declarations()));
         }
-        @Override public Node visitDecl(LittleParser.DeclContext ctx)
+        else
         {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            DeclNode node = new DeclNode("declare");
-            if(!ctx.string_decl().isEmpty())
-            {
-                node.setLeft(visit(ctx.string_decl()));
-            }
-            else if (!ctx.var_decl().isEmpty())
-            {
-                node.setLeft(visit(ctx.var_decl()));
-            }
-            node.setRight(visit(ctx.decl()));
-            return node;
+            node = visit(ctx.func_declarations());
         }
-        @Override public Node visitString_decl(LittleParser.String_declContext ctx)
+        return node;
+    }
+    @Override public Node visitDecl(LittleParser.DeclContext ctx)
+    {
+        if(ctx.isEmpty())
         {
-            StringDeclNode node = new StringDeclNode(":=");
-            node.setLeft(new IdNode(ctx.id().getText()));
-            node.setRight(new StringLiteralNode(ctx.str().getText()));
-            return node;
+            return null;
         }
-        @Override public Node visitVar_decl(LittleParser.Var_declContext ctx)
+        DeclNode node = new DeclNode("declare");
+        if(!ctx.string_decl().isEmpty())
         {
-            VarDeclNode node = new VarDeclNode("variable");
-            node.setLeft(visit(ctx.any_type()));
-            node.setRight(visit(ctx.id_list()));
-            return node;
+            node.setLeft(visit(ctx.string_decl()));
         }
-        @Override public Node visitId_list(LittleParser.Id_listContext ctx)
+        else if (!ctx.var_decl().isEmpty())
         {
-            IdNode node = new IdNode(ctx.id().getText());
-            node.setRight(visit(ctx.id_tail()));
-            return node;
+            node.setLeft(visit(ctx.var_decl()));
         }
-        @Override public Node visitId_tail(LittleParser.Id_tailContext ctx)
+        node.setRight(visit(ctx.decl()));
+        return node;
+    }
+    @Override public Node visitString_decl(LittleParser.String_declContext ctx)
+    {
+        StringDeclNode node = new StringDeclNode(":=");
+        node.setLeft(new IdNode(ctx.id().getText()));
+        node.setRight(new StringLiteralNode(ctx.str().getText()));
+        return node;
+    }
+    @Override public Node visitVar_decl(LittleParser.Var_declContext ctx)
+    {
+        VarDeclNode node = new VarDeclNode("variable");
+        node.setLeft(visit(ctx.any_type()));
+        node.setRight(visit(ctx.id_list()));
+        return node;
+    }
+    @Override public Node visitId_list(LittleParser.Id_listContext ctx)
+    {
+        IdNode node = new IdNode(ctx.id().getText());
+        node.setRight(visit(ctx.id_tail()));
+        return node;
+    }
+    @Override public Node visitId_tail(LittleParser.Id_tailContext ctx)
+    {
+        if(ctx.isEmpty())
         {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            IdNode node = new IdNode(ctx.id().getText());
-            node.setRight(visit(ctx.id_tail()));
-            return node;
+            return null;
         }
-        @Override public Node visitAny_type(LittleParser.Any_typeContext ctx)
+        IdNode node = new IdNode(ctx.id().getText());
+        node.setRight(visit(ctx.id_tail()));
+        return node;
+    }
+    @Override public Node visitAny_type(LittleParser.Any_typeContext ctx)
+    {
+        return new TypeNode(ctx.getText());
+    }
+    
+    @Override public Node visitFunc_declarations(LittleParser.Func_declarationsContext ctx)
+    {
+        if(ctx.isEmpty())
         {
-            return new TypeNode(ctx.getText());
+            return null;
         }
-        
-        @Override public Node visitFunc_declarations(LittleParser.Func_declarationsContext ctx)
+        FuncListNode node = new FuncListNode("function declaration");
+        node.setLeft(visit(ctx.func_decl()));
+        node.setRight(visit(ctx.func_declarations()));
+        return node;
+    }
+    @Override public Node visitFunc_decl(LittleParser.Func_declContext ctx)
+    {
+        FuncDeclNode node = new FuncDeclNode(ctx.id().getText());
+        node.setParams(visit(ctx.param_decl_list()));
+        node.setLeft(visit(ctx.any_type()));
+        node.setRight(visit(ctx.func_body()));
+        return node;
+    }
+    @Override public Node visitParam_decl_list(LittleParser.Param_decl_listContext ctx)
+    {
+        if(ctx.isEmpty())
         {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            FuncListNode node = new FuncListNode("function declaration");
-            node.setLeft(visit(ctx.func_decl()));
-            node.setRight(visit(ctx.func_declarations()));
-            return node;
+            return null;
         }
-        @Override public Node visitFunc_decl(LittleParser.Func_declContext ctx)
+        Node node = visit(ctx.param_decl());
+        node.setRight(visit(ctx.param_decl_tail()));
+        return node;
+    }
+    @Override public Node visitParam_decl(LittleParser.Param_declContext ctx)
+    {
+        return new ParamsNode(ctx.id().getText(), ctx.var_type().getText());
+    }
+    @Override public Node visitParam_decl_tail(LittleParser.Param_decl_tailContext ctx)
+    {
+        if(ctx.isEmpty())
         {
-            FuncDeclNode node = new FuncDeclNode(ctx.id().getText());
-            node.setParams(visit(ctx.param_decl_list()));
-            node.setLeft(visit(ctx.any_type()));
-            node.setRight(visit(ctx.func_body()));
-            return node;
+            return null;
         }
-        @Override public Node visitParam_decl_list(LittleParser.Param_decl_listContext ctx)
+        Node node = visit(ctx.param_decl());
+        node.setRight(visit(ctx.param_decl_tail()));
+        return node;
+    }
+    @Override public Node visitFunc_body(LittleParser.Func_bodyContext ctx)
+    {
+        FuncBodyNode node = new FuncBodyNode("body");
+        node.setLeft(visit(ctx.decl()));
+        node.setRight(visit(ctx.stmt_list()));
+        return node;
+    }
+    @Override public Node visitStmt_list(LittleParser.Stmt_listContext ctx)
+    {
+        if(ctx.isEmpty())
         {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            Node node = visit(ctx.param_decl());
-            node.setRight(visit(ctx.param_decl_tail()));
-            return node;
+            return null;
         }
-        @Override public Node visitParam_decl(LittleParser.Param_declContext ctx)
+        StmtListNode node = new StmtListNode("stmt");
+        node.setLeft(visit(ctx.stmt()));
+        node.setRight(visit(ctx.stmt_list()));
+        return node;
+    }
+    @Override public Node visitStmt(LittleParser.StmtContext ctx)
+    {
+        return visit(ctx.base_stmt());
+    }
+    @Override public Node visitBase_stmt(LittleParser.Base_stmtContext ctx)
+    {
+        if(!ctx.assign_stmt().isEmpty())
         {
-            return new ParamsNode(ctx.id().getText(), ctx.var_type().getText());
+            return visit(ctx.assign_stmt());
         }
-        @Override public Node visitParam_decl_tail(LittleParser.Param_decl_tailContext ctx)
+        else if(!ctx.write_stmt().isEmpty())
         {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            Node node = visit(ctx.param_decl());
-            node.setRight(visit(ctx.param_decl_tail()));
-            return node;
+            return visit(ctx.write_stmt());
         }
-        @Override public Node visitFunc_body(LittleParser.Func_bodyContext ctx)
+        else if(!ctx.read_stmt().isEmpty())
         {
-            FuncBodyNode node = new FuncBodyNode("body");
-            node.setLeft(visit(ctx.decl()));
-            node.setRight(visit(ctx.stmt_list()));
-            return node;
+            return visit(ctx.read_stmt());
         }
-        @Override public Node visitStmt_list(LittleParser.Stmt_listContext ctx)
+        else
         {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            StmtListNode node = new StmtListNode("stmt");
-            node.setLeft(visit(ctx.stmt()));
-            node.setRight(visit(ctx.stmt_list()));
-            return node;
-        }
-        @Override public Node visitStmt(LittleParser.StmtContext ctx)
-        {
-            return visit(ctx.base_stmt());
-        }
-        @Override public Node visitBase_stmt(LittleParser.Base_stmtContext ctx)
-        {
-            if(!ctx.assign_stmt().isEmpty())
-            {
-                return visit(ctx.assign_stmt());
-            }
-            else if(!ctx.write_stmt().isEmpty())
-            {
-                return visit(ctx.write_stmt());
-            }
-            else if(!ctx.read_stmt().isEmpty())
-            {
-                return visit(ctx.read_stmt());
-            }
-            else
-            {
-                return visit(ctx.return_stmt());
-            }
-        }
-        @Override public Node visitWrite_stmt(LittleParser.Write_stmtContext ctx)
-        {
-            WriteNode node = new WriteNode("write");
-            node.setRight(visit(ctx.id_list()));
-            return node;
-        }
-        @Override public Node visitRead_stmt(LittleParser.Read_stmtContext ctx)
-        {
-            ReadNode node = new ReadNode("read");
-            node.setRight(visit(ctx.id_list()));
-            return node;
-        }
-        @Override public Node visitReturn_stmt(LittleParser.Return_stmtContext ctx)
-        {
-            ReturnNode node = new ReturnNode("return");
-            node.setLeft(visit(ctx.expr()));
-            return node;
-        }
-        @Override public Node visitAssign_stmt(LittleParser.Assign_stmtContext ctx)
-        {
-            return visit(ctx.assign_expr());
-        }
-        @Override public Node visitAssign_expr(LittleParser.Assign_exprContext ctx)
-        {
-            AssignNode node = new AssignNode(":=");
-            node.setLeft(new IdNode(ctx.id().getText()));
-            node.setRight(visit(ctx.expr()));
-            return node;
-        }
-        @Override public Node visitFloat(LittleParser.FloatContext ctx)
-        {
-            return new FloatLiteralNode(Double.parseDouble(ctx.getText()));
-            
-        }
-        @Override public Node visitInt(LittleParser.IntContext ctx)
-        {
-            return new IntLiteralNode(Integer.parseInt(ctx.getText()));
-        }
-        @Override public Node visitId(LittleParser.IdContext ctx)
-        {
-            return new IdNode(ctx.getText());
-        }
-        @Override public Node visitPrimary(LittleParser.PrimaryContext ctx)
-        {
-            return visit(ctx);
-        }
-        @Override public Node visitExpr(LittleParser.ExprContext ctx)
-        {
-            Node node;
-            if(!ctx.expr_prefix().isEmpty())
-            {
-                node = visit(ctx.expr_prefix());
-                Node current = node;
-                while(current.getRight() != null)
-                {
-                    current = current.getRight();
-                }
-                current.setRight(visit(ctx.factor()));
-            }
-            else
-            {
-                node = visit(ctx.factor());
-            }
-            return node;
-        }
-        @Override public Node visitExpr_prefix(LittleParser.Expr_prefixContext ctx)
-        {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            AddopNode node = new AddopNode(ctx.addop().getText());
-            node.setLeft(visit(ctx.factor()));
-            var parent = visit(ctx.expr_prefix());
-            if(parent != null)
-            {
-                parent.setRight(node);
-                return parent;
-            }
-            return node;
-        }
-        @Override public Node visitFactor(LittleParser.FactorContext ctx)
-        {
-            Node node;
-            if(!ctx.factor_prefix().isEmpty())
-            {
-                node = visit(ctx.factor_prefix());
-                Node current = node;
-                while(current.getRight() != null)
-                {
-                    current = current.getRight();
-                }
-                current.setRight(visit(ctx.postfix_expr()));
-            }
-            else
-            {
-                node = visit(ctx.postfix_expr());
-            }
-            return node;
-        }
-        @Override public Node visitFactor_prefix(LittleParser.Factor_prefixContext ctx)
-        {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            
-            MulopNode node = new MulopNode(ctx.mulop().getText());
-            node.setLeft(visit(ctx.postfix_expr()));
-            var parent = visit(ctx.factor_prefix());
-            if(parent != null)
-            {
-                parent.setRight(node);
-                return parent;
-            }
-            return node;
-        }
-        @Override public Node visitPostfix_expr(LittleParser.Postfix_exprContext ctx)
-        {
-            return visit(ctx);
-        }
-        @Override public Node visitCall_expr(LittleParser.Call_exprContext ctx)
-        {
-            CallExprNode node = new CallExprNode("call_expr");
-            node.setLeft(new IdNode(ctx.id().getText()));
-            node.setRight(visit(ctx.expr_list()));
-            return node;
-        }
-        @Override public Node visitExpr_list(LittleParser.Expr_listContext ctx)
-        {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            ExprListNode node = new ExprListNode("list of expressions");
-            node.setLeft(visit(ctx.expr()));
-            node.setRight(visit(ctx.expr_list_tail()));
-            return node;
-        }
-        @Override public Node visitExpr_list_tail(LittleParser.Expr_list_tailContext ctx)
-        {
-            if(ctx.isEmpty())
-            {
-                return null;
-            }
-            ExprListNode node = new ExprListNode("list of expressions");
-            node.setLeft(visit(ctx.expr()));
-            node.setRight(visit(ctx.expr_list_tail()));
-            return node;
+            return visit(ctx.return_stmt());
         }
     }
-   
-    abstract class Node 
+    @Override public Node visitWrite_stmt(LittleParser.Write_stmtContext ctx)
     {
-        public Node Left;
-        public Node Right;
-        public void setLeft(Node node)
-        {
-            this.Left = node;
-        }
-        public Node getLeft()
-        {
-            return this.Left;
-        }
-        public void setRight(Node node)
-        {
-            this.Right = node;
-        }
-        public Node getRight()
-        {
-            return this.Right;
-        }
+        WriteNode node = new WriteNode("write");
+        node.setRight(visit(ctx.id_list()));
+        return node;
     }
-    abstract class InfixNode<T> extends Node
+    @Override public Node visitRead_stmt(LittleParser.Read_stmtContext ctx)
     {
-        public T Value;
-        
-        public InfixNode(T value)
-        {
-            this.Value = value;
-        }
-        public void setValue (T value)
-        {
-            this.Value = value;
-        }
-        public T getValue()
-        {
-            return this.Value;
-        }
+        ReadNode node = new ReadNode("read");
+        node.setRight(visit(ctx.id_list()));
+        return node;
     }
-    class AddopNode extends InfixNode<String>
+    @Override public Node visitReturn_stmt(LittleParser.Return_stmtContext ctx)
     {
-        public AddopNode(String s)
-        {
-            super(s);
-        }
+        ReturnNode node = new ReturnNode("return");
+        node.setLeft(visit(ctx.expr()));
+        return node;
     }
-    class MulopNode extends InfixNode<String>
+    @Override public Node visitAssign_stmt(LittleParser.Assign_stmtContext ctx)
     {
-        public MulopNode(String s)
-        {
-            super(s);
-        }   
+        return visit(ctx.assign_expr());
     }
-    class AssignNode extends InfixNode<String>
+    @Override public Node visitAssign_expr(LittleParser.Assign_exprContext ctx)
     {
-        public AssignNode(String s)
-        {
-            super(s);
-        }
+        AssignNode node = new AssignNode(":=");
+        node.setLeft(new IdNode(ctx.id().getText()));
+        node.setRight(visit(ctx.expr()));
+        return node;
     }
-    class FloatLiteralNode extends InfixNode<Double>
+    @Override public Node visitFloat(LittleParser.FloatContext ctx)
     {
-        public FloatLiteralNode(double value)
-        {
-            super(value);
-        }
-    }
-    class IntLiteralNode extends InfixNode<Integer>
-    {
-        public IntLiteralNode(int value)
-        {
-            super(value);
-        }
-    }
-    class StringLiteralNode extends InfixNode<String>
-    {
-        public StringLiteralNode(String value)
-        {
-            super(value);
-        }
-    }
-    class IdNode extends InfixNode<String>
-    {
-        public IdNode(String name)
-        {
-            super(name);
-        }
+        return new FloatLiteralNode(Double.parseDouble(ctx.getText()));
         
     }
-    class ExprNode extends InfixNode<String>
+    @Override public Node visitInt(LittleParser.IntContext ctx)
     {
-        public ExprNode(String s)
-        {
-            super(s);
-        }
+        return new IntLiteralNode(Integer.parseInt(ctx.getText()));
     }
-    class StringDeclNode extends InfixNode<String>
+    @Override public Node visitId(LittleParser.IdContext ctx)
     {
-        public StringDeclNode(String s)
-        {
-            super(s);
-        }
+        return new IdNode(ctx.getText());
     }
-    class DeclNode extends InfixNode<String>
+    @Override public Node visitPrimary(LittleParser.PrimaryContext ctx)
     {
-        public DeclNode(String s)
-        {
-            super(s);
-        }
+        return visit(ctx);
     }
-    class VarDeclNode extends InfixNode<String>
+    @Override public Node visitExpr(LittleParser.ExprContext ctx)
     {
-        public VarDeclNode(String value)
+        Node node;
+        if(!ctx.expr_prefix().isEmpty())
         {
-            super(value);
+            node = visit(ctx.expr_prefix());
+            Node current = node;
+            while(current.getRight() != null)
+            {
+                current = current.getRight();
+            }
+            current.setRight(visit(ctx.factor()));
         }
+        else
+        {
+            node = visit(ctx.factor());
+        }
+        return node;
     }
-    class FuncDeclNode extends InfixNode<String>
+    @Override public Node visitExpr_prefix(LittleParser.Expr_prefixContext ctx)
     {
-        public Node params;
-        public FuncDeclNode(String value)
+        if(ctx.isEmpty())
         {
-            super(value);
+            return null;
         }
-        public void setParams(Node node)
+        AddopNode node = new AddopNode(ctx.addop().getText());
+        node.setLeft(visit(ctx.factor()));
+        var parent = visit(ctx.expr_prefix());
+        if(parent != null)
         {
-            this.params = node;
+            parent.setRight(node);
+            return parent;
         }
-        public Node getParams()
-        {
-            return this.params;
-        }
+        return node;
     }
-    class FuncListNode extends InfixNode<String>
+    @Override public Node visitFactor(LittleParser.FactorContext ctx)
     {
-        public FuncListNode (String value)
+        Node node;
+        if(!ctx.factor_prefix().isEmpty())
         {
-            super(value);
-        }   
+            node = visit(ctx.factor_prefix());
+            Node current = node;
+            while(current.getRight() != null)
+            {
+                current = current.getRight();
+            }
+            current.setRight(visit(ctx.postfix_expr()));
+        }
+        else
+        {
+            node = visit(ctx.postfix_expr());
+        }
+        return node;
     }
-    class FuncBodyNode extends InfixNode<String>
+    @Override public Node visitFactor_prefix(LittleParser.Factor_prefixContext ctx)
     {
-        public FuncBodyNode(String value)
+        if(ctx.isEmpty())
         {
-            super(value);
+            return null;
         }
+        
+        MulopNode node = new MulopNode(ctx.mulop().getText());
+        node.setLeft(visit(ctx.postfix_expr()));
+        var parent = visit(ctx.factor_prefix());
+        if(parent != null)
+        {
+            parent.setRight(node);
+            return parent;
+        }
+        return node;
     }
-    class ParamsNode extends InfixNode<String>
+    @Override public Node visitPostfix_expr(LittleParser.Postfix_exprContext ctx)
     {
-        public String Type;
-        public ParamsNode(String value, String type)
-        {
-            super(value);
-            this.Type = type;
-        }
-        public void setType(String type)
-        {
-            this.Type = type;
-        }
-        public String getType()
-        {
-            return this.Type;
-        }
+        return visit(ctx);
     }
-    class TypeNode extends InfixNode<String>
+    @Override public Node visitCall_expr(LittleParser.Call_exprContext ctx)
     {
-        public TypeNode (String value)
-        {
-            super(value);
-        }
+        CallExprNode node = new CallExprNode("call_expr");
+        node.setLeft(new IdNode(ctx.id().getText()));
+        node.setRight(visit(ctx.expr_list()));
+        return node;
     }
-    class StmtListNode extends InfixNode<String>
+    @Override public Node visitExpr_list(LittleParser.Expr_listContext ctx)
     {
-        public StmtListNode (String value)
+        if(ctx.isEmpty())
         {
-            super(value);
+            return null;
         }
+        ExprListNode node = new ExprListNode("list of expressions");
+        node.setLeft(visit(ctx.expr()));
+        node.setRight(visit(ctx.expr_list_tail()));
+        return node;
     }
-    class StmtNode extends InfixNode<String>
+    @Override public Node visitExpr_list_tail(LittleParser.Expr_list_tailContext ctx)
     {
-        public StmtNode(String value)
+        if(ctx.isEmpty())
         {
-            super(value);
+            return null;
         }
-    }
-    class CallExprNode extends InfixNode<String>
-    {
-        public CallExprNode(String value)
-        {
-            super(value);
-        }
-    }
-    class ExprListNode extends InfixNode<String>
-    {
-        public ExprListNode (String value)
-        {
-            super(value);
-        }
-    }
-    class WriteNode extends InfixNode<String>
-    {
-        public WriteNode(String value)
-        {
-            super(value);
-        }
-    }
-    class ReadNode extends InfixNode<String>
-    {
-        public ReadNode(String value)
-        {
-            super(value);
-        }
-    }
-    class ReturnNode extends InfixNode<String>
-    {
-        public ReturnNode(String value)
-        {
-            super(value);
-        }
+        ExprListNode node = new ExprListNode("list of expressions");
+        node.setLeft(visit(ctx.expr()));
+        node.setRight(visit(ctx.expr_list_tail()));
+        return node;
     }
 }
+
+    
+    
+    
+    
+    
+    
+    
