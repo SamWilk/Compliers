@@ -362,6 +362,25 @@ class SymbolExtractor extends LittleBaseListener {
         // System.out.println("Creating new Tree:",current_tree.visitAssign_expr(ctx)); 
      }
     //////////////////////////////////////////////////////////////////////////
+
+    /////////// Post order Nodes \\\\\\\\\\\\
+    public static void getNodesPost(/* Node class here */String currentNode){
+        //Just giving currentNode a type so it will compile
+        if(currentNode == null) return;
+
+        getNodesPost(/* */currentNode);
+        getNodesPost(/* */currentNode);
+        /*
+            Current Node is what is gotten back from the tree
+            If it is a value/ variable store it into a new temp
+            If it is a operand then do said operand and store into new temp
+            Once := is found then store most recent temp into the last node
+            On each call parse for arraylist to print correctly
+        */
+        System.out.println("Node Info < " + currentNode + ">");
+
+    }
+    /////////////////////////////////////////
 }
 
 class SymbolTable {
