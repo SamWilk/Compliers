@@ -399,7 +399,7 @@ class SymbolExtractor extends LittleBaseListener {
                 break;
             case "AddopNode":
                 AddopNode temp4 = (AddopNode) currentNode;
-                System.out.println("MulopNode Node < " + temp4.getValue() + " >");
+                System.out.println("AddopNode Node < " + temp4.getValue() + " >");
                 break;
             default:
                 System.out.println("------------------------------------------");
