@@ -353,24 +353,27 @@ class SymbolExtractor extends LittleBaseListener {
      //////////////////////////////////////////////////////////////////////////////////
 
      ///////////////////////// Assignment Statement //////////////////////////
-     @Override public void enterAssign_stmt(LittleParser.Assign_stmtContext ctx) { 
+     @Override public void enterAssign_expr(LittleParser.Assign_exprContext ctx) { 
         System.out.print("Entering Assignment here: ");
-        System.out.println(ctx.assign_expr().getText());
+        current_tree = new AST();
+        System.out.println("Creating Tree");
+        Node root = current_tree.visitAssign_expr(ctx);
+        getNodesPost(root);
         //This is where we will create a new tree each time an assignment happens
         //Then call a function that will recursively get the nodes in post order, and at each node 
         //Generate the correct assembly for it put it into the arraylist and then be done
         // current_tree = new AST();
         // System.out.println("Creating new Tree:",current_tree.visitAssign_expr(ctx)); 
-     }
+      }
     //////////////////////////////////////////////////////////////////////////
 
     /////////// Post order Nodes \\\\\\\\\\\\
-    public static void getNodesPost(/* Node class here */String currentNode){
+    public static void getNodesPost(Node currentNode){
         //Just giving currentNode a type so it will compile
         if(currentNode == null) return;
 
-        getNodesPost(/* */currentNode);
-        getNodesPost(/* */currentNode);
+        getNodesPost(currentNode);
+        getNodesPost(currentNode);
         /*
             Current Node is what is gotten back from the tree
             If it is a value/ variable store it into a new temp

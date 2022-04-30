@@ -1,6 +1,6 @@
 
 
-class AST extends LittleBaseVisitor<Node>
+public class AST extends LittleBaseVisitor<Node>
 {
     @Override public Node visitProgram(LittleParser.ProgramContext ctx)
     {
