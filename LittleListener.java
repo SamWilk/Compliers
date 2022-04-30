@@ -387,6 +387,26 @@ public interface LittleListener extends ParseTreeListener {
 	 */
 	void exitMulop(LittleParser.MulopContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link LittleParser#float}.
+	 * @param ctx the parse tree
+	 */
+	void enterFloat(LittleParser.FloatContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LittleParser#float}.
+	 * @param ctx the parse tree
+	 */
+	void exitFloat(LittleParser.FloatContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link LittleParser#int}.
+	 * @param ctx the parse tree
+	 */
+	void enterInt(LittleParser.IntContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link LittleParser#int}.
+	 * @param ctx the parse tree
+	 */
+	void exitInt(LittleParser.IntContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link LittleParser#if_stmt}.
 	 * @param ctx the parse tree
 	 */

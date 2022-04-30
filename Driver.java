@@ -55,8 +55,6 @@ public class Driver {
         //parser.program();
         SymbolExtractor extractor = new SymbolExtractor();
 
-        
-
         ParseTree tree = parser.program();
        
         ParseTreeWalker.DEFAULT.walk(extractor, tree);
@@ -354,33 +352,7 @@ class SymbolExtractor extends LittleBaseListener {
      //////////////////////////////////////////////////////////////////////////////////
 
      ///////////////////////// Assignment Statement //////////////////////////
-     @Override public void enterAssign_expr(LittleParser.Assign_exprContext ctx) {
-         //System.out.println("Assigning Value: " + ctx.assign_expr().getText());
-         current_tree = new AST(":=");
-         current_tree.current.left = new Node(ctx.id().IDENTIFIER().getText());
-      }
-      @Override public void enterExpr(LittleParser.ExprContext ctx)
-      {
-        current_tree.current.right = new Node(ctx.factor().postfix_expr().primary().getText());
-      }
-      @Override public void enterExpr_prefix(LittleParser.Expr_prefixContext ctx)
-      {
-          
-          current_tree.current.left = new Node(ctx.factor().postfix_expr().primary().getText());
-      }
-      @Override public void enterFactor(LittleParser.FactorContext ctx)
-      {
-        
-      }
-      @Override public void enterAddop(LittleParser.AddopContext ctx)
-      {
-        current_tree.set_current(new Node(ctx.getText()));
-      }
-      @Override public void enterMulop(LittleParser.MulopContext ctx)
-      {
-        current_tree.set_current(new Node(ctx.getText()));
-      }
-	 @Override public void exitAssign_stmt(LittleParser.Assign_stmtContext ctx) { }
+   
     //////////////////////////////////////////////////////////////////////////
 }
 
