@@ -167,6 +167,24 @@ class AST{
                 return visit(ctx.return_stmt());
             }
         }
+        @Override public Node visitWrite_stmt(LittleParser.Write_stmtContext ctx)
+        {
+            WriteNode node = new WriteNode("write");
+            node.setRight(visit(ctx.id_list()));
+            return node;
+        }
+        @Override public Node visitRead_stmt(LittleParser.Read_stmtContext ctx)
+        {
+            ReadNode node = new ReadNode("read");
+            node.setRight(visit(ctx.id_list()));
+            return node;
+        }
+        @Override public Node visitReturn_stmt(LittleParser.Return_stmtContext ctx)
+        {
+            ReturnNode node = new ReturnNode("return");
+            node.setLeft(visit(ctx.expr()));
+            return node;
+        }
         @Override public Node visitAssign_stmt(LittleParser.Assign_stmtContext ctx)
         {
             return visit(ctx.assign_expr());
@@ -495,6 +513,27 @@ class AST{
     class ExprListNode extends InfixNode<String>
     {
         public ExprListNode (String value)
+        {
+            super(value);
+        }
+    }
+    class WriteNode extends InfixNode<String>
+    {
+        public WriteNode(String value)
+        {
+            super(value);
+        }
+    }
+    class ReadNode extends InfixNode<String>
+    {
+        public ReadNode(String value)
+        {
+            super(value);
+        }
+    }
+    class ReturnNode extends InfixNode<String>
+    {
+        public ReturnNode(String value)
         {
             super(value);
         }
