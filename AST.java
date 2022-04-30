@@ -190,8 +190,11 @@ public class AST extends LittleBaseVisitor<Node>
     @Override public Node visitAssign_expr(LittleParser.Assign_exprContext ctx)
     {
         AssignNode node = new AssignNode(":=");
+        System.out.println("Node Created: "+ node.getValue());
         node.setLeft(new IdNode(ctx.id().getText()));
-        node.setRight(visit(ctx.expr()));
+        System.out.println("Left Node: "+ node.Left);
+        //node.setRight(visit(ctx.expr()));
+        //System.out.println("Right Node: "+ node.Right);
         return node;
     }
     @Override public Node visitFloat(LittleParser.FloatContext ctx)
