@@ -353,7 +353,15 @@ class SymbolExtractor extends LittleBaseListener {
      //////////////////////////////////////////////////////////////////////////////////
 
      ///////////////////////// Assignment Statement //////////////////////////
-   
+     @Override public void enterAssign_stmt(LittleParser.Assign_stmtContext ctx) { 
+        System.out.print("Entering Assignment here: ");
+        System.out.println(ctx.assign_expr().getText());
+        //This is where we will create a new tree each time an assignment happens
+        //Then call a function that will recursively get the nodes in post order, and at each node 
+        //Generate the correct assembly for it put it into the arraylist and then be done
+        // current_tree = new AST();
+        // System.out.println("Creating new Tree:",current_tree.visitAssign_expr(ctx)); 
+     }
     //////////////////////////////////////////////////////////////////////////
 }
 
@@ -427,67 +435,4 @@ class SymbolAttributes {
 
 }
 
-// class AST {
-
-//     public class Node{
-
-//         public String temp;
-//         public String oprand;
-//         public String code;
-//         public Node left;
-//         public Node right;
-    
-//         public Node(String node){
-//             this.temp = node;
-//             this.left = null;
-//             this.right = null;
-//         }
-    
-//     }
-
-//     public Node root;
-
-//     public AST(){
-//         Node node = new Node(":=");
-//         node.code = "STORE";
-//         node.oprand = ":=";
-//         this.root = node;
-//     }
-
-//     public Node getRoot(){
-//         return this.root;
-//     }
-
-//     public void setAssignment(String temp){
-//         Node newNode = new Node(temp);
-//         root.left = newNode;
-//     }
-
-//     public void createTree(String rightHand){
-//         String [] tokens;
-//         if(rightHand.contains("+") == true){
-//             tokens = rightHand.split("\\+");
-//             Node newNode = new Node("+");
-//         Node current = root;
-//         while(current.right != null){
-//             current = current.right;
-//         }
-//         current.right = newNode;
-//         }
-//         if(rightHand.contains("*") == true){
-//             tokens = rightHand.split("\\*");
-//             Node newNode = new Node("*");
-//         Node current = root;
-//         while(current.right != null){
-//             current = current.right;
-//         }
-//         current.right = newNode;
-//         }
-        
-
-        
-//     }
-
-
-// }
 

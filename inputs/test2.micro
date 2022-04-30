@@ -1,22 +1,23 @@
-PROGRAM test BEGIN
-	INT a,b,c;
-	FLOAT x,y,z;
-	VOID h,j,k;
+PROGRAM p
+BEGIN
+
+	INT a,b,c,d;
 	
-	FUNCTION INT function1()
+	FUNCTION VOID main()
 	BEGIN
-	RETURN 35*45;
-	END
-	FUNCTION INT function2()
-	BEGIN
-		RETURN function2();
-	END
-	FUNCTION INT main()
-	BEGIN
-	WRITE (a);
-	READ (b);
-	a := function1();
-	c := function2();
-	c:=a+b;
+		a := 20;
+		b := 30;
+		c := 40;
+
+		c := a - b;
+		b := b*b;
+		b := b + a;
+		d := (b*a);
+		a := d/a;
+
+		WRITE (c);
+		WRITE (b);
+		WRITE (a);
+	
 	END
 END
