@@ -1,12 +1,22 @@
-PROGRAM test BEGIN
-	INT a,b,c;
-	FLOAT x,y,z;
-	VOID h,j,k;
-     --This line should cause a parse error
-	FUNCTION INT main() BEGIN
-	WRITE (a);
-	READ (b);
-	END
-	INT o,p;
-END
+PROGRAM expr
+BEGIN
+	
+	FLOAT x,y,z,t;
+	STRING newline := "\n";
 
+	FUNCTION VOID main()
+	BEGIN
+		x := 1.0;
+		y := 2.0;
+		z := 3.14159;
+		WRITE (x, newline);
+		WRITE (z, newline);
+		WRITE (y, newline);
+		x := z/2.0;
+		y := z/y;
+		WRITE (x, newline);
+		WRITE (y, newline);
+		t := x + y;
+		WRITE (t, newline);
+	END	
+END

@@ -55,15 +55,15 @@ public class Driver {
         //parser.program();
         SymbolExtractor extractor = new SymbolExtractor();
 
-        
-
         ParseTree tree = parser.program();
        
         ParseTreeWalker.DEFAULT.walk(extractor, tree);
+        
         extractor.printTiny();
-        //extractor.print();
 
+        var newTree = new AST().visitProgram(parser.program());
 
+        System.out.println(newTree.toString());
     }
 }
 
@@ -94,6 +94,10 @@ class SymbolExtractor extends LittleBaseListener {
     private Integer blockCounter;
 
     private ArrayList<CustomNode> TinyList = new ArrayList();
+
+    private ArrayList<AST> trees = new ArrayList<AST>();
+
+    private AST current_tree;
 
 
     public SymbolExtractor() {
@@ -348,23 +352,62 @@ class SymbolExtractor extends LittleBaseListener {
      //////////////////////////////////////////////////////////////////////////////////
 
      ///////////////////////// Assignment Statement //////////////////////////
-     @Override public void enterAssign_stmt(LittleParser.Assign_stmtContext ctx) {
-         //System.out.println("Assigning Value: " + ctx.assign_expr().getText());
-         String [] tokens = ctx.assign_expr().getText().split(":=");
-         for(int i = 0; i < tokens.length; i++){
-             //System.out.println("Token: " + tokens[i]);
-         }
-
-         /*
-         AST tree = new AST();
-         tree.setAssignment(tokens[0]);
-         tree.createTree(tokens[1]);
-         System.out.println("Tree: " + tree.getRoot().temp + " : " + tree.getRoot().left.temp + " : " + tree.getRoot().right.temp);
-         */
+     @Override public void enterAssign_expr(LittleParser.Assign_exprContext ctx) { 
+        current_tree = new AST();
+        System.out.println();
+        System.out.println("Creating Tree");
+        Node root = current_tree.visitAssign_expr(ctx);
+        getNodesPost(root);
+        System.out.println();
+        //This is where we will create a new tree each time an assignment happens
+        //Then call a function that will recursively get the nodes in post order, and at each node 
+        //Generate the correct assembly for it put it into the arraylist and then be done
+        // current_tree = new AST();
+        // System.out.println("Creating new Tree:",current_tree.visitAssign_expr(ctx)); 
       }
-	
-	 @Override public void exitAssign_stmt(LittleParser.Assign_stmtContext ctx) { }
     //////////////////////////////////////////////////////////////////////////
+
+    /////////// Post order Nodes \\\\\\\\\\\\
+    public static void getNodesPost(Node currentNode){
+        //Just giving currentNode a type so it will compile
+        if(currentNode == null) return;
+
+        getNodesPost(currentNode.getRight());
+        getNodesPost(currentNode.getLeft());
+        
+        /*
+            Current Node is what is gotten back from the tree
+            If it is a value/ variable store it into a new temp
+            If it is a operand then do said operand and store into new temp
+            Once := is found then store most recent temp into the last node
+            On each call parse for arraylist to print correctly
+        */
+        String checkType = currentNode.getClass().getName();
+        switch(checkType){
+            case "AssignNode":
+                AssignNode temp = (AssignNode) currentNode;
+                System.out.println("AssignNode Node < " + temp.getValue() + " >");
+                break;
+            case "IdNode":
+                IdNode temp2 = (IdNode) currentNode;
+                System.out.println("IdNode Node < " + temp2.getValue() + " >");
+                break;
+            case "MulopNode":
+                MulopNode temp3 = (MulopNode) currentNode;
+                System.out.println("MulopNode Node < " + temp3.getValue() + " >");
+                break;
+            case "AddopNode":
+                AddopNode temp4 = (AddopNode) currentNode;
+                System.out.println("MulopNode Node < " + temp4.getValue() + " >");
+                break;
+            default:
+                System.out.println("------------------------------------------");
+                System.out.println("NO TYPE FOUND FOR " + checkType);
+                System.out.println("------------------------------------------");
+        }
+
+    }
+    /////////////////////////////////////////
 }
 
 class SymbolTable {
@@ -437,67 +480,4 @@ class SymbolAttributes {
 
 }
 
-// class AST {
-
-//     public class Node{
-
-//         public String temp;
-//         public String oprand;
-//         public String code;
-//         public Node left;
-//         public Node right;
-    
-//         public Node(String node){
-//             this.temp = node;
-//             this.left = null;
-//             this.right = null;
-//         }
-    
-//     }
-
-//     public Node root;
-
-//     public AST(){
-//         Node node = new Node(":=");
-//         node.code = "STORE";
-//         node.oprand = ":=";
-//         this.root = node;
-//     }
-
-//     public Node getRoot(){
-//         return this.root;
-//     }
-
-//     public void setAssignment(String temp){
-//         Node newNode = new Node(temp);
-//         root.left = newNode;
-//     }
-
-//     public void createTree(String rightHand){
-//         String [] tokens;
-//         if(rightHand.contains("+") == true){
-//             tokens = rightHand.split("\\+");
-//             Node newNode = new Node("+");
-//         Node current = root;
-//         while(current.right != null){
-//             current = current.right;
-//         }
-//         current.right = newNode;
-//         }
-//         if(rightHand.contains("*") == true){
-//             tokens = rightHand.split("\\*");
-//             Node newNode = new Node("*");
-//         Node current = root;
-//         while(current.right != null){
-//             current = current.right;
-//         }
-//         current.right = newNode;
-//         }
-        
-
-        
-//     }
-
-
-// }
 

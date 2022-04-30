@@ -1,0 +1,25 @@
+PROGRAM groupX
+BEGIN
+    --Programs purpose is to find the velocity of a object after a specific amount of time
+
+    FLOAT velocity, intVelocity, accleration, time, t1, t2;
+    STRING newLine := "\n";
+    STRING question := "Enter inital velocity: ";
+    STRING question2 := "Enter amount of time: ";
+    STRING question3 := "Enter accleration: ";
+    FUNCTION VOID main()
+    BEGIN
+        WRITE(question);
+        READ(intVelocity);
+        WRITE(newLine);
+        WRITE(question2);
+        READ(time);
+        WRITE(newLine);
+        WRITE(question3);
+        READ(accleration);
+        t1 := accleration * time;
+        velocity := t1 + intVelocity;
+        WRITE(velocity, newLine);
+    END
+
+END

@@ -63,9 +63,11 @@ postfix_expr      : primary | call_expr ;
 call_expr         : id '(' expr_list ')' ;
 expr_list         : expr expr_list_tail | empty ;
 expr_list_tail    : ',' expr expr_list_tail | empty ;
-primary           : '(' expr ')' | id | FLOATLITERAL | INTLITERAL;
+primary           : '(' expr ')' | id | float | int;
 addop             : '+' | '-' ;
 mulop             : '*' | '/' ;
+float             : FLOATLITERAL;
+int               : INTLITERAL;
 /* Complex Statements and Condition */
 if_stmt           : 'IF' '(' cond ')' decl stmt_list else_part 'ENDIF' ;
 else_part         : 'ELSE' decl stmt_list | empty ;
