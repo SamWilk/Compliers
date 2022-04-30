@@ -190,11 +190,46 @@ public class AST extends LittleBaseVisitor<Node>
     @Override public Node visitAssign_expr(LittleParser.Assign_exprContext ctx)
     {
         AssignNode node = new AssignNode(":=");
-        System.out.println("Node Created: "+ node.getValue());
+        //System.out.println("Node Created: "+ node.getValue());
         node.setLeft(new IdNode(ctx.id().getText()));
-        System.out.println("Left Node: "+ node.Left);
-        //node.setRight(visit(ctx.expr()));
-        //System.out.println("Right Node: "+ node.Right);
+        //System.out.println("Left Node: "+ node.Left);
+        System.out.println("Expression: " + ctx.getText());
+        String expression = ctx.expr().getText();
+        if(expression.contains("*")){
+            //System.out.println("* found!");
+            node.setRight(new MulopNode("*"));
+            String [] tokens = expression.split("\\*");
+            MulopNode currentNode = (MulopNode)node.getRight();
+            for(int i = 0; i < tokens.length; i++){
+                if(currentNode.getLeft() == null){
+                    currentNode.setLeft(new IdNode(tokens[i]));
+                }else{
+                    currentNode.setRight(new IdNode(tokens[i]));
+                }
+            }
+        }
+        else if(expression.contains("+")){
+            //System.out.println("+ found!");
+            node.setRight(new AddopNode("+"));
+            String [] tokens = expression.split("\\+");
+            AddopNode currentNode = (AddopNode)node.getRight();
+            for(int i = 0; i < tokens.length; i++){
+                if(currentNode.getLeft() == null){
+                    currentNode.setLeft(new IdNode(tokens[i]));
+                }else{
+                    currentNode.setRight(new IdNode(tokens[i]));
+                }
+            }
+        }
+        else if(expression.contains("-")){
+            System.out.println("- found!");
+        }
+        else if(expression.contains("/")){
+            System.out.println("/ found!");
+        }else{
+            //System.out.println("No Operand");
+            node.setRight(new IdNode(expression));
+        }
         return node;
     }
     @Override public Node visitFloat(LittleParser.FloatContext ctx)

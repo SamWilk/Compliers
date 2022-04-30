@@ -354,11 +354,12 @@ class SymbolExtractor extends LittleBaseListener {
 
      ///////////////////////// Assignment Statement //////////////////////////
      @Override public void enterAssign_expr(LittleParser.Assign_exprContext ctx) { 
-        System.out.print("Entering Assignment here: ");
         current_tree = new AST();
+        System.out.println();
         System.out.println("Creating Tree");
         Node root = current_tree.visitAssign_expr(ctx);
-        //getNodesPost(root);
+        getNodesPost(root);
+        System.out.println();
         //This is where we will create a new tree each time an assignment happens
         //Then call a function that will recursively get the nodes in post order, and at each node 
         //Generate the correct assembly for it put it into the arraylist and then be done
@@ -372,8 +373,9 @@ class SymbolExtractor extends LittleBaseListener {
         //Just giving currentNode a type so it will compile
         if(currentNode == null) return;
 
-        getNodesPost(currentNode);
-        getNodesPost(currentNode);
+        getNodesPost(currentNode.getRight());
+        getNodesPost(currentNode.getLeft());
+        
         /*
             Current Node is what is gotten back from the tree
             If it is a value/ variable store it into a new temp
@@ -381,7 +383,29 @@ class SymbolExtractor extends LittleBaseListener {
             Once := is found then store most recent temp into the last node
             On each call parse for arraylist to print correctly
         */
-        System.out.println("Node Info < " + currentNode + ">");
+        String checkType = currentNode.getClass().getName();
+        switch(checkType){
+            case "AssignNode":
+                AssignNode temp = (AssignNode) currentNode;
+                System.out.println("AssignNode Node < " + temp.getValue() + " >");
+                break;
+            case "IdNode":
+                IdNode temp2 = (IdNode) currentNode;
+                System.out.println("IdNode Node < " + temp2.getValue() + " >");
+                break;
+            case "MulopNode":
+                MulopNode temp3 = (MulopNode) currentNode;
+                System.out.println("MulopNode Node < " + temp3.getValue() + " >");
+                break;
+            case "AddopNode":
+                AddopNode temp4 = (AddopNode) currentNode;
+                System.out.println("MulopNode Node < " + temp4.getValue() + " >");
+                break;
+            default:
+                System.out.println("------------------------------------------");
+                System.out.println("NO TYPE FOUND FOR " + checkType);
+                System.out.println("------------------------------------------");
+        }
 
     }
     /////////////////////////////////////////

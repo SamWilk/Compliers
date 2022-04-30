@@ -1,5 +1,5 @@
 
-class IdNode extends InfixNode<String>
+public class IdNode extends InfixNode<String>
 {
     public IdNode(String name)
     {
