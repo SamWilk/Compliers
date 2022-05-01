@@ -2,7 +2,9 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.tool.Rule;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.*;
 // import java.util.ArrayList;
@@ -55,16 +57,24 @@ public class Driver {
         //parser.program();
         SymbolExtractor extractor = new SymbolExtractor();
 
-        ParseTree tree = parser.program();
-       
-        ParseTreeWalker.DEFAULT.walk(extractor, tree);
-        
-        extractor.printTiny();
-
+        // ParseTree tree = parser.program();
         var newTree = new AST().visitProgram(parser.program());
+        var value = new GenerateAssemblyVisitor().Visit(newTree);
+        
+        value = value.replace("null", "");
+        System.out.println(value);
 
-        System.out.println(newTree.toString());
+        // ParseTreeWalker.DEFAULT.walk(extractor, tree);
+        String output_file = "";
+        String temp[] = inputFile.split("/");
+        String temp2 = temp[1].substring(0, temp[1].lastIndexOf("."));
+        output_file += temp2 + ".out";
+        BufferedWriter writer = new BufferedWriter(new FileWriter(output_file));
+        writer.write(value);
+        writer.close();
+        
     }
+
 }
 
 //For arraylist I am using, not an ASTree node

@@ -4,7 +4,7 @@ public class AST extends LittleBaseVisitor<Node>
 {
     @Override public Node visitProgram(LittleParser.ProgramContext ctx)
     {
-        IdNode top = new IdNode(ctx.id().getText());
+        ProgramNode top = new ProgramNode(ctx.id().getText());
         top.setRight(visit(ctx.pgm_body()));
         return top;
     }
@@ -12,7 +12,7 @@ public class AST extends LittleBaseVisitor<Node>
     {
         Node node;
         Node current;
-        if(!ctx.decl().isEmpty())
+        if(ctx.decl() != null)
         {
             node = visit(ctx.decl());
             current = node;
@@ -30,18 +30,19 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitDecl(LittleParser.DeclContext ctx)
     {
-        if(ctx.isEmpty())
-        {
-            return null;
-        }
+        
         DeclNode node = new DeclNode("declare");
-        if(!ctx.string_decl().isEmpty())
+        if(ctx.string_decl() != null)
         {
             node.setLeft(visit(ctx.string_decl()));
         }
-        else if (!ctx.var_decl().isEmpty())
+        else if (ctx.var_decl() != null)
         {
             node.setLeft(visit(ctx.var_decl()));
+        }
+        else
+        {
+            return null;
         }
         node.setRight(visit(ctx.decl()));
         return node;
@@ -68,7 +69,7 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitId_tail(LittleParser.Id_tailContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.id() == null)
         {
             return null;
         }
@@ -83,7 +84,7 @@ public class AST extends LittleBaseVisitor<Node>
     
     @Override public Node visitFunc_declarations(LittleParser.Func_declarationsContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.func_decl() == null)
         {
             return null;
         }
@@ -102,7 +103,7 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitParam_decl_list(LittleParser.Param_decl_listContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.param_decl() == null)
         {
             return null;
         }
@@ -116,7 +117,7 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitParam_decl_tail(LittleParser.Param_decl_tailContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.param_decl() == null)
         {
             return null;
         }
@@ -133,7 +134,7 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitStmt_list(LittleParser.Stmt_listContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.stmt() == null)
         {
             return null;
         }
@@ -148,15 +149,15 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitBase_stmt(LittleParser.Base_stmtContext ctx)
     {
-        if(!ctx.assign_stmt().isEmpty())
+        if(ctx.assign_stmt() != null)
         {
             return visit(ctx.assign_stmt());
         }
-        else if(!ctx.write_stmt().isEmpty())
+        else if(ctx.write_stmt() != null)
         {
             return visit(ctx.write_stmt());
         }
-        else if(!ctx.read_stmt().isEmpty())
+        else if(ctx.read_stmt() != null)
         {
             return visit(ctx.read_stmt());
         }
@@ -192,44 +193,7 @@ public class AST extends LittleBaseVisitor<Node>
         AssignNode node = new AssignNode(":=");
         //System.out.println("Node Created: "+ node.getValue());
         node.setLeft(new IdNode(ctx.id().getText()));
-        //System.out.println("Left Node: "+ node.Left);
-        System.out.println("Expression: " + ctx.getText());
-        String expression = ctx.expr().getText();
-        if(expression.contains("*")){
-            //System.out.println("* found!");
-            node.setRight(new MulopNode("*"));
-            String [] tokens = expression.split("\\*");
-            MulopNode currentNode = (MulopNode)node.getRight();
-            for(int i = 0; i < tokens.length; i++){
-                if(currentNode.getLeft() == null){
-                    currentNode.setLeft(new IdNode(tokens[i]));
-                }else{
-                    currentNode.setRight(new IdNode(tokens[i]));
-                }
-            }
-        }
-        else if(expression.contains("+")){
-            //System.out.println("+ found!");
-            node.setRight(new AddopNode("+"));
-            String [] tokens = expression.split("\\+");
-            AddopNode currentNode = (AddopNode)node.getRight();
-            for(int i = 0; i < tokens.length; i++){
-                if(currentNode.getLeft() == null){
-                    currentNode.setLeft(new IdNode(tokens[i]));
-                }else{
-                    currentNode.setRight(new IdNode(tokens[i]));
-                }
-            }
-        }
-        else if(expression.contains("-")){
-            System.out.println("- found!");
-        }
-        else if(expression.contains("/")){
-            System.out.println("/ found!");
-        }else{
-            //System.out.println("No Operand");
-            node.setRight(new IdNode(expression));
-        }
+        node.setRight(visit(ctx.expr()));
         return node;
     }
     @Override public Node visitFloat(LittleParser.FloatContext ctx)
@@ -247,17 +211,34 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitPrimary(LittleParser.PrimaryContext ctx)
     {
-        return visit(ctx);
+        if(ctx.float_() != null)
+        {
+            return visit(ctx.float_());
+        }
+        else if (ctx.id() != null)
+        {
+            return visit(ctx.id());
+        }
+        else if (ctx.int_() != null)
+        {
+            return visit(ctx.int_());
+        }
+        else
+        {
+            return visit(ctx.expr());
+        }
     }
     @Override public Node visitExpr(LittleParser.ExprContext ctx)
     {
         Node node;
-        if(!ctx.expr_prefix().isEmpty())
+        node = visit(ctx.expr_prefix());
+        if(node != null)
         {
-            node = visit(ctx.expr_prefix());
             Node current = node;
+            
             while(current.getRight() != null)
             {
+                
                 current = current.getRight();
             }
             current.setRight(visit(ctx.factor()));
@@ -270,13 +251,14 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitExpr_prefix(LittleParser.Expr_prefixContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.addop() == null)
         {
             return null;
         }
         AddopNode node = new AddopNode(ctx.addop().getText());
         node.setLeft(visit(ctx.factor()));
         var parent = visit(ctx.expr_prefix());
+        
         if(parent != null)
         {
             parent.setRight(node);
@@ -284,12 +266,13 @@ public class AST extends LittleBaseVisitor<Node>
         }
         return node;
     }
+    
     @Override public Node visitFactor(LittleParser.FactorContext ctx)
     {
         Node node;
-        if(!ctx.factor_prefix().isEmpty())
+        node = visit(ctx.factor_prefix());
+        if(node != null)
         {
-            node = visit(ctx.factor_prefix());
             Node current = node;
             while(current.getRight() != null)
             {
@@ -305,7 +288,7 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitFactor_prefix(LittleParser.Factor_prefixContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.postfix_expr() == null)
         {
             return null;
         }
@@ -322,7 +305,14 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitPostfix_expr(LittleParser.Postfix_exprContext ctx)
     {
-        return visit(ctx);
+        if(ctx.primary() != null)
+        {
+            return visit(ctx.primary());
+        }
+        else
+        {
+            return visit(ctx.call_expr());
+        }
     }
     @Override public Node visitCall_expr(LittleParser.Call_exprContext ctx)
     {
@@ -333,7 +323,7 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitExpr_list(LittleParser.Expr_listContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.expr() != null)
         {
             return null;
         }
@@ -344,7 +334,7 @@ public class AST extends LittleBaseVisitor<Node>
     }
     @Override public Node visitExpr_list_tail(LittleParser.Expr_list_tailContext ctx)
     {
-        if(ctx.isEmpty())
+        if(ctx.expr() != null)
         {
             return null;
         }
