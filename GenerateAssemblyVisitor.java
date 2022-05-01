@@ -333,7 +333,7 @@ public class GenerateAssemblyVisitor extends AstVisitor<String>
             SymbolAttributes attr = symbol_table.symbolTable.get(current.Value);
             if(attr.type.equals("STRING"))
             {
-                final_str += "sys writes " + attr.value + "\n";
+                final_str += "sys writes " + current.Value + "\n";
             }
             else if (attr.type.equals("INT"))
             {

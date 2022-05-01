@@ -35,11 +35,11 @@ move r2 r0
 move r0 e
 
 sys writei c
-sys writes "\n"
+sys writes newline
 sys writei d
-sys writes "\n"
+sys writes newline
 sys writei e
-sys writes "\n"
+sys writes newline
 
 sys halt
 end
