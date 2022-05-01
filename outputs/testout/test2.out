@@ -1,0 +1,53 @@
+var a
+var b
+var c
+var d
+
+label main
+move 20 r0
+move r0 a
+
+move 30 r0
+move r0 b
+
+move 40 r0
+move r0 c
+
+move a r1
+move b r2
+subi r1 r2
+move r2 r0
+move r0 c
+
+move b r1
+move b r2
+muli r1 r2
+move r2 r0
+move r0 b
+
+move b r1
+move a r2
+addi r1 r2
+move r2 r0
+move r0 b
+
+move b r1
+move a r2
+muli r1 r2
+move r2 r0
+move r0 d
+
+move d r1
+move a r2
+divi r1 r2
+move r2 r0
+move r0 a
+
+sys writei c
+
+sys writei b
+
+sys writei a
+
+sys halt
+end

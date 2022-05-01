@@ -1,0 +1,54 @@
+var x
+var y
+var z
+var t
+str newline "\n"
+
+label main
+move 1.0 r0
+move r0 x
+
+move 2.0 r0
+move r0 y
+
+move 3.14159 r0
+move r0 z
+
+sys writer x
+sys writes newline
+
+sys writer z
+sys writes newline
+
+sys writer y
+sys writes newline
+
+move z r1
+move 2.0 r2
+divr r1 r2
+move r2 r0
+move r0 x
+
+move z r1
+move y r2
+divr r1 r2
+move r2 r0
+move r0 y
+
+sys writer x
+sys writes newline
+
+sys writer y
+sys writes newline
+
+move x r1
+move y r2
+addr r1 r2
+move r2 r0
+move r0 t
+
+sys writer t
+sys writes newline
+
+sys halt
+end

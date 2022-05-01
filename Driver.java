@@ -365,11 +365,11 @@ class SymbolExtractor extends LittleBaseListener {
      ///////////////////////// Assignment Statement //////////////////////////
      @Override public void enterAssign_expr(LittleParser.Assign_exprContext ctx) { 
         current_tree = new AST();
-        System.out.println();
-        System.out.println("Creating Tree");
+        //System.out.println();
+       // System.out.println("Creating Tree");
         Node root = current_tree.visitAssign_expr(ctx);
         getNodesPost(root);
-        System.out.println();
+        //System.out.println();
         //This is where we will create a new tree each time an assignment happens
         //Then call a function that will recursively get the nodes in post order, and at each node 
         //Generate the correct assembly for it put it into the arraylist and then be done
